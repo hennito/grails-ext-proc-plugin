@@ -1,0 +1,103 @@
+EXT-PROC Plugin
+===============
+1. What's this?
+2. Example Setup
+3. UI
+4. Future
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1. What's this?
+
+In a project I am working on, I need to invoke external processes. I.e.
+I use latex2e to create a pdf report file. The "markup" is generated 
+using gsp pages and rendered to some files in a temporary folder.
+Hence I need to invoke pdflatex to create the final pdf report.
+
+I am developing this project on different machines not all of them have
+latex2e installed locally. So I needed a way to invoke the external 
+process locally and remotely in a homegenous way.
+
+I also use it to invoke a really expensive engineering application 
+where I don't have a license for each machine I am using. With this
+plugin I can invoke that application as an external process and process
+its output.
+ 
+Of course you can also use it to invoke a simple /bin/ls but there may
+be groovier approaches to that ;)
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+2. Example Setup
+
+The example setup will guide you to setup gnuplot.
+
+First we need to create a domain object for the local:
+
+String gnuplotBin = "/usr/bin/gnuplot"
+def useLocal = new File(gnuplotBin).exists()
+				
+// use it	
+if (useLocal) {
+	log.info "using local gnuplot process"
+	def gnuplot = new ExternalProcess(
+		name:Constants.EXTERNAL_PROCESS_GNUPLOT,
+		command:gnuplotBin,
+		defaultParams:[ExternalProcess.WORKDIR_PLACEHOLDER],
+		workDir:ExternalProcess.NEW_WORKDIR,
+		isRemote:false,
+		exposeViaWS:true,	// allow remote access
+		cleanUpWorkDir:true,
+		returnZippedDir:true,
+		timeout:15000,
+		allowedFiles:[],
+		requiredFiles:[],
+		returnFiles:[] 
+	)
+	gnuplot.save(failOnError:true,flush:true)
+}
+else {
+	// use gnuplot remotely
+	log.info "using remote latex process"
+	def gnuplotRemote = new ExternalProcess(
+		name:Constants.EXTERNAL_PROCESS_GNUPLOT,
+		command:'http://your.remote.server/services/invokerWeb?wsdl',
+		workDir:"pdflatex",
+		isRemote:true,
+		cleanUpWorkDir:true,
+		returnZippedDir:true,
+		timeout:15000
+	)
+	gnuplotRemote.save(failOnError:true,flush:true)
+}
+	
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+3. UI
+
+A simple UI is available to setup external processes and invoke them.
+It is disabled by default. If you want to use it, you probably want to
+setup prober security first. I.e. use spring security to restrict 
+access to authorized users only.
+
+To enable the UI simply set
+
+extproc.ui.enabled = false
+
+in your Config.groovy to true.
+
+After enabling the UI you can access the functionality on to the 
+following URL
+http://{your app url}/extproc/
+
+This allows you CRUD external processes and invoke them directly from 
+the UI.
+
+Basically the UI is just to make your admin life easier. (I.e. the 
+gnuplot server is down for maintenance, you can temporarliy point your
+process to another server, your app won't notice the difference).
+
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+4. Future
+
+

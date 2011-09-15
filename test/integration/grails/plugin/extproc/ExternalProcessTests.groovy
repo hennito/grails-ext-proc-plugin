@@ -5,11 +5,12 @@ import grails.plugin.extproc.ExternalProcessInput;
 import grails.plugin.extproc.ExternalProcessResult;
 import grails.plugin.extproc.FileHandlingService;
 import grails.plugin.extproc.ExternalProcessService;
+
 import grails.test.*
 
-class ExternalProcessTests extends GroovyTestCase {
-	FileHandlingService fileHandlingService
-	ExternalProcessService externalProcessService
+class ExternalProcessIntegrationTests extends GroovyTestCase {
+	def fileHandlingService
+	def externalProcessService
     
 	File temp
 	
@@ -22,7 +23,7 @@ class ExternalProcessTests extends GroovyTestCase {
         super.setUp()
 		//mockLogging(LocalInvokerService, true)
 		//mockLogging(FileHandlingService, true)
-		ExternalProcessService externalProcessService = new ExternalProcessService()
+		externalProcessService = new ExternalProcessService()
 		fileHandlingService = new FileHandlingService()
 		temp  = fileHandlingService.createTempDir()
 
