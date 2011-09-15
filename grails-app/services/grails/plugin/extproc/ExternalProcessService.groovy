@@ -27,14 +27,14 @@ class ExternalProcessService {
 				if (!process.exposedViaWS) 
 					return invokeRemote((ExternalProcess)process,input)
 				else 
-					return new ExternalProcessResult(serviceCode:'error.process.remote.and.exposed')
+					return new ExternalProcessResult(serviceReturn:'error.process.remote.and.exposed')
 			else 
 				return invokeLocal((ExternalProcess)process,input)
 		else
-			return new ExternalProcessResult(serviceCode:'error.process.notfound')
+			return new ExternalProcessResult(serviceReturn:'error.process.notfound')
 	}
 
-	ExternalProcessResult invokeRemote(ExternalProcess process, ExternalProcessInput input) {
+	private ExternalProcessResult invokeRemote(ExternalProcess process, ExternalProcessInput input) {
 		def result
 	
 

@@ -1,7 +1,6 @@
 // configuration for plugin testing - will not be included in the plugin zip
- 
 
-extproc.ui.enabled = true
+extproc.ui.enabled = false // cause beforeInterceptor in controller to throw an exception
 
 log4j = {
     // Example of changing the log pattern for the default console
