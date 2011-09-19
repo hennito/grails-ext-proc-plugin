@@ -6,10 +6,11 @@ import java.util.List;
 import grails.plugin.extproc.ExternalProcessInput;
 import grails.plugin.extproc.ExternalProcessResult;
 import java.util.regex.Pattern
+import com.grails.cxf.client.*
 
 class ExternalProcessService {
 	static expose = ['cxf']
-	static exclude = ["invokeRemote"]
+	static exclude = ["invokeRemote","invokeLocal"]
 	
 	def fileHandlingService
 	def webServiceClientFactory
@@ -36,42 +37,66 @@ class ExternalProcessService {
 
 	private ExternalProcessResult invokeRemote(ExternalProcess process, ExternalProcessInput input) {
 		def result
-	
 
 		final String METHOD_NAME = "invokeRemote() - "
-//		
 		log.info "$METHOD_NAME process is $process"
 		log.debug "$METHOD_NAME input is $input"
 		
-		def wsClient = webServiceClientFactory.getWebServiceClient(
-			grails.plugin.extproc.remote.ExternalProcessServicePortType,
-			process.workDir, // TODO: improve, method // serviceName 4 caching
-			process.command, // endpoint url
-			/*boolean secured*/ false, 
-			/*String username*/null, 
-			/*String password*/null
+		def (command, url) = process.command.split("@")
+		log.info "remote command is $command"
+		log.info "remote url is $url"
+
+		DynamicWebServiceClient client = new DynamicWebServiceClient(
+				clientInterface: grails.plugin.extproc.remote.ExternalProcessServicePortType,
+				serviceName: "$command",
+				serviceEndpointAddress: "$url",
+				secured: false,
+				username: "${input.user}",
+				password: "${input.token}",
+				webServiceClientFactory: webServiceClientFactory)
+		
+	
+
+/*
+		Object webServiceClient = webServiceClientFactory.getWebServiceClient(
+			grails.plugin.extproc.remote.ExternalProcessServicePortType, 
+			"$command", 
+			"$url", 
+			false, 
+			"testUser", 
+			"testPassword"
 		)
 		
+	*/	
 		
-		log.info webServiceClientFactory.interfaceMap
+	def webserviceObject = client.object
+	log.info "webserviceObject : $webserviceObject"
+	
+	log.info webServiceClientFactory.interfaceMap
 		
-		log.info "wsClient is $wsClient"
+		log.info "wsClient is $client"
 		
-		grails.plugin.extproc.remote.ExternalProcessInput wrappedInput = new grails.plugin.extproc.remote.ExternalProcessInput(
-			 user:input.user,
-			 token:input.token,
-			 parameters:input.parameters,
-			 env:input.env,
-			 zippedWorkDir:input.zippedWorkDir
-		)
-		result = wsClient.executeProcess(process.workDir, wrappedInput)
+		grails.plugin.extproc.remote.ExternalProcessInput wrappedInput = 
+			new grails.plugin.extproc.remote.ExternalProcessInput(
+				user:input.user,
+				token:input.token,
+				parameters:input.parameters,
+				env:input.env,
+				zippedWorkDir:input.zippedWorkDir
+			)
+		
+		 
+		result = webserviceObject.executeProcess(command, wrappedInput)
 //	
-		grails.plugin.extproc.ExternalProcessResult wrappedResult = new grails.plugin.extproc.ExternalProcessResult(
+		
+		grails.plugin.extproc.ExternalProcessResult wrappedResult = 
+		new grails.plugin.extproc.ExternalProcessResult(
 			returnCode:result.returnCode,
 			consoleLog:result.consoleLog,
 			zippedDir:result.zippedDir,
 			serviceReturn:result.serviceReturn
 		)
+		
 		return wrappedResult	
 	}
 	
@@ -242,9 +267,10 @@ class ExternalProcessService {
 			log.info "$METHOD_NAME finished process ${process.name}, took ${stop - start} ms."
 
 			if (workDir && process.returnZippedDir) {
-				log.info "zipping ${process.returnFiles}"
+				log.info "zipping ${process.returnFiles} and/or ${process.returnFilesPattern}"
+				
 				result.zippedDir = fileHandlingService.zipDir(workDir) { fn ->  
-					!process.returnFiles || process.returnFiles.contains(fn) || fn =~ process.returnFilesPattern 
+					( !process.returnFiles || process.returnFiles.contains(fn) ) && (!process.returnFilesPattern || fn =~ "$process.returnFilesPattern") 
 				}
 			}
 			if (workDir && process.cleanUpWorkDir) {

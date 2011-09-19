@@ -171,7 +171,7 @@ class FileHandlingService {
 				return dest.toByteArray();
 			}
 			catch (java.util.zip.ZipException zex) {
-				log.error "zipDirInclude: $zex"
+				log.error "zipDirInclude: $zex, returning null"
 				return null
 			}
 
