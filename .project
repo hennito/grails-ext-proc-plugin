@@ -28,5 +28,10 @@
 			<type>2</type>
 			<locationURI>GRAILS_ROOT/1.3.7/projects/ext-proc/plugins</locationURI>
 		</link>
+		<link>
+			<name>groovy</name>
+			<type>2</type>
+			<location>/home/henne/dev/cxf-client/src/groovy</location>
+		</link>
 	</linkedResources>
 </projectDescription>
