@@ -14,7 +14,7 @@ class ExtProcGrailsPlugin {
     def author = "Henrik Lohse"
     def authorEmail = "henne.lohse@gmail.com"
     def title = "External Processes Plugin"
-    def description = '''\\
+    def description = '''\
 This plugin provides easy access to external processes. You can pass command line arguments and input files
 in zip format.
 You can use this to create dvi/pdf from latex, images from gnuplot, calculation results from ansys and/or 
