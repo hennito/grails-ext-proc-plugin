@@ -3,8 +3,6 @@ grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
 //grails.project.war.file = "target/${appName}-${appVersion}.war"
 
-grails.plugin.location.'cxf-client' = "../../../dev/cxf-client"
-
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {
@@ -32,7 +30,7 @@ grails.project.dependency.resolution = {
         plugins {
 			runtime ':jquery:1.5.2'
 			runtime ':cxf:0.7.0'			
-		//	runtime ':cxf-client:0.3'
+			runtime ':cxf-client:1.1'
 		}
     }
 }
