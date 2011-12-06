@@ -31,7 +31,7 @@ installation of the external process and use them from your application remotely
   <plugins>
     <runtime>
       <plugin group='org.grails.plugins' name='cxf-client' version='1.2.2' />
-      <plugin group='org.grails.plugins' name='jquery' version='1.6.1' />
+      <plugin group='org.grails.plugins' name='jquery' version='1.7' />
       <plugin group='org.grails.plugins' name='cxf' version='0.7.0' />
     </runtime>
   </plugins>
