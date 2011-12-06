@@ -270,7 +270,7 @@ class ExternalProcessService {
 				log.info "zipping ${process.returnFiles} and/or ${process.returnFilesPattern}"
 				
 				result.zippedDir = fileHandlingService.zipDir(workDir) { fn ->  
-					( !process.returnFiles || process.returnFiles.contains(fn) ) && (!process.returnFilesPattern || fn =~ "$process.returnFilesPattern") 
+					( !process.returnFiles || process.returnFiles.contains(fn) ) && (!process.returnFilesPattern || fn =~ "${process.returnFilesPattern}") 
 				}
 			}
 			if (workDir && process.cleanUpWorkDir) {

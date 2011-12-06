@@ -1,16 +1,25 @@
 class ExtProcGrailsPlugin {
     // the plugin version
     def version = "0.1"
+
     // the version or versions of Grails the plugin is designed for
-    def grailsVersion = "1.2.2 > *"
+    def grailsVersion = "1.3.5 > *" // cxf-plugin needs 1.3.5
+
+    // license
+    def license = "APACHE"
+
+    // source code management
+    def scm = [ url: "git://github.com/hennito/grails-ext-proc-plugin.git" ]
+    //def scm = [ url: "http://svn.grails-plugins.codehaus.org/browse/grails-plugins/" ]
+
     // the other plugins this plugin depends on
-    def dependsOn = [:]
+    def dependsOn = [:] // defined in BuildConfig
+
     // resources that are excluded from plugin packaging
     def pluginExcludes = [
             "grails-app/views/error.gsp"
     ]
 
-    // TODO Fill in these fields
     def author = "Henrik Lohse"
     def authorEmail = "henne.lohse@gmail.com"
     def title = "External Processes Plugin"
@@ -25,22 +34,19 @@ installation of the external process and use them from your application remotely
 '''
 
     // URL to the plugin's documentation
-    def documentation = "http://grails.org/plugin/ext-proc"
+    def documentation = "https://github.com/hennito/grails-ext-proc-plugin"
+    def issueManagement = [ url:'https://github.com/hennito/grails-ext-proc-plugin/issues' ]
 
     def doWithWebDescriptor = { xml ->
-        // TODO Implement additions to web.xml (optional), this event occurs before 
     }
 
     def doWithSpring = {
-        // TODO Implement runtime spring config (optional)
     }
 
     def doWithDynamicMethods = { ctx ->
-        // TODO Implement registering dynamic methods to classes (optional)
     }
 
     def doWithApplicationContext = { applicationContext ->
-        // TODO Implement post initialization spring config (optional)
     }
 
     def onChange = { event ->

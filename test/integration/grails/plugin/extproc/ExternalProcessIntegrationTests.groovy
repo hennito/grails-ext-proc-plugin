@@ -49,6 +49,30 @@ class ExternalProcessIntegrationTests extends GroovyTestCase {
 			requiredFiles:['master.tex'],
 			returnFiles:['master.pdf']).save()
 
+		def proc2b = new ExternalProcess(
+			name:'pdflatexRetFilePattern',
+			command:'/usr/bin/pdflatex',
+			workDir:ExternalProcess.NEW_WORKDIR,
+			cleanUpWorkDir:true,
+			returnZippedDir:true,
+			timeout:1500,
+			allowedFiles:['master.tex'],
+			requiredFiles:['master.tex'],
+			returnFilesPattern:'/.*\\.pdf$/',
+			returnFiles:[]).save()
+
+		def proc2c = new ExternalProcess(
+			name:'pdflatexRetFilePatternFail',
+			command:'/usr/bin/pdflatex',
+			workDir:ExternalProcess.NEW_WORKDIR,
+			cleanUpWorkDir:true,
+			returnZippedDir:true,
+			timeout:1500,
+			allowedFiles:['master.tex'],
+			requiredFiles:['master.tex'],
+			returnFilesPattern:'/.*\\.abc$/',
+			returnFiles:[]).save()
+
 		def proc3 = new ExternalProcess(
 			name:'pdflatexTimeOut',
 			command:'/usr/bin/pdflatex',
@@ -197,6 +221,52 @@ class ExternalProcessIntegrationTests extends GroovyTestCase {
 		println result.zippedDir?.size()
 		
     }
+
+	void testPdfLatexWithReturnFilePattern() {
+		if (isWindows()) {
+			println "skipping non-windows tests"
+			return
+		}
+		// set up test file
+		createLatexInput()
+		
+		byte[] zippedInput = fileHandlingService.zipDir(temp, null)
+		
+		ExternalProcessInput input = new ExternalProcessInput()
+		input.zippedWorkDir = zippedInput
+		input.parameters = ['--interaction=nonstopmode',latexName]
+		
+		ExternalProcessResult result = externalProcessService.executeProcess('pdflatexRetFilePattern',input)
+		assertNull result.serviceReturn
+		assertEquals result.returnCode, 0
+		println result.consoleLog
+		println result.zippedDir?.size()
+		
+    }
+
+	void testPdfLatexWithReturnFilePatternFail() {
+		if (isWindows()) {
+			println "skipping non-windows tests"
+			return
+		}
+		// set up test file
+		createLatexInput()
+		
+		byte[] zippedInput = fileHandlingService.zipDir(temp, null)
+		
+		ExternalProcessInput input = new ExternalProcessInput()
+		input.zippedWorkDir = zippedInput
+		input.parameters = ['--interaction=nonstopmode',latexName]
+		
+		ExternalProcessResult result = externalProcessService.executeProcess('pdflatexRetFilePatternFail',input)
+		assertNull result.serviceReturn
+		assertEquals result.returnCode, 0
+
+		assertNull result.zippedDir
+    }
+
+
+
 	
 	void testSetEnv() {
 		if (isWindows()) {

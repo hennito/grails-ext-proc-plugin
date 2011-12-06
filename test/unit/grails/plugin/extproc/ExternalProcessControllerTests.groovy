@@ -26,6 +26,7 @@ class ExternalProcessControllerTests extends ControllerUnitTestCase {
 		assert "list" == controller.redirectArgs.action
     }
 
+/*
     @Test
     public void list() {
     	def model = controller.list()
@@ -34,7 +35,7 @@ class ExternalProcessControllerTests extends ControllerUnitTestCase {
     	assert p9 == model.externalProcessInstanceList[1]
     	assert 2 == model.externalProcessInstanceTotal
     }
-
+*/
     @Test
     public void show() {
     	controller.params.id = 7

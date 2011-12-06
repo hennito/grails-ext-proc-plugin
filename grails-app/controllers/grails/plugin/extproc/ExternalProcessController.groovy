@@ -21,11 +21,8 @@ class ExternalProcessController {
         redirect(action: "list", params: params)
     }
 
-	
-	
-	
     def list = {
-        params.max = Math.min(params.max ? params.int('max') : 10, 100)
+    	params.max = Math.min(params.max ? params.int('max') : 10, 100)
         [externalProcessInstanceList: ExternalProcess.list(params), externalProcessInstanceTotal: ExternalProcess.count()]
     }
 
