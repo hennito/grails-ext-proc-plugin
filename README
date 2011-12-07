@@ -28,7 +28,8 @@ be groovier approaches to that ;)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 2. Example Setup
 
-The example setup will guide you to setup gnuplot.
+The example setup will guide you to setup gnuplot. The complete 
+application can be found at https://github.com/hennito/ext-proc-demo.
 
 First we need to create a domain object for the external process:
 
@@ -53,7 +54,7 @@ if (useLocal) {
 		allowedFilesPatter:null,
 		allowedFiles:["gnuplot.dat"],
 		requiredFiles:[],
-		returnFilesPattern:"/.*png\$/",
+		returnFilesPattern:".*png\$",
 		returnFiles:[] 
 	)
 	gnuplot.save(failOnError:true,flush:true)
