@@ -28,7 +28,7 @@ grails.project.dependency.resolution = {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
 }
         plugins {
-			runtime ':jquery:1.7'
+			runtime ':jquery:1.7.1'
 			runtime ':cxf:0.7.0'			
 			runtime ':cxf-client:1.2.2'
 		}

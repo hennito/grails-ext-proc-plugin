@@ -51,8 +51,8 @@ class ExternalProcessService {
 				serviceName: "$command",
 				serviceEndpointAddress: "$url",
 				secured: false,
-				username: "${input.user}",
-				password: "${input.token}",
+		//		username: "${input.user}",
+		//		password: "${input.token}",
 				webServiceClientFactory: webServiceClientFactory)
 		
 	
