@@ -25,7 +25,7 @@ class ExternalProcess {
 		allowedFiles nullable:true
 		
 		returnFilesPattern nullable:true
-		returnFiles nuallable:true
+		returnFiles nullable:true
 		
 		tokenPattern nullable:true
     }
