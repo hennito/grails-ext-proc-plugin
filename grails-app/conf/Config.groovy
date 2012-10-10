@@ -54,6 +54,7 @@ environments {
 	test {
 		grails.serverURL = "http://localhost:8080/${appName}"
 		service.remote.url = "${grails.serverURL}/services/externalProcess?wsdl"
+		extproc.ui.enabled = true // cause beforeInterceptor in controller to throw an exception
 	}
 }
 

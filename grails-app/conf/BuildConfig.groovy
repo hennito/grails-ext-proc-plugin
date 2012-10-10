@@ -1,7 +1,6 @@
 grails.project.class.dir = "target/classes"
 grails.project.test.class.dir = "target/test-classes"
 grails.project.test.reports.dir = "target/test-reports"
-//grails.project.war.file = "target/${appName}-${appVersion}.war"
 
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
@@ -14,6 +13,7 @@ grails.project.dependency.resolution = {
         grailsPlugins()
         grailsHome()
         grailsCentral()
+        grailsRepo "http://grails.org/plugins"
 
         // uncomment the below to enable remote dependency resolution
         // from public Maven repositories
@@ -26,11 +26,14 @@ grails.project.dependency.resolution = {
     }
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
-}
-        plugins {
-			runtime ':jquery:1.7.1'
-			runtime ':cxf:0.7.0'			
-			runtime ':cxf-client:1.2.2'
-		}
+	}
+
+    plugins {
+		runtime ':jquery:1.7.1'
+		runtime ':cxf:1.0.3'			
+		runtime ':cxf-client:1.4.3'
+ 		runtime ":resources:1.1.6"
+		build ":release:2.0.4"
+	}
     
 }

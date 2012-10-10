@@ -5,7 +5,7 @@
         <meta name="layout" content="extproc" />
         <g:set var="entityName" value="${message(code: 'externalProcess.label', default: 'ExternalProcess')}" />
         <title><g:message code="default.create.label" args="[entityName]" /></title>
-            </head>
+    </head>
     <body>
         <div class="nav">
             <span class="menuButton"><a class="home" href="${createLink(uri: '/')}"><g:message code="default.home.label"/></a></span>

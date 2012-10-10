@@ -1,126 +1,141 @@
 package grails.plugin.extproc
 
-import grails.test.*
-import org.junit.*
+import grails.test.mixin.TestFor
+import grails.test.mixin.domain.DomainClassUnitTestMixin
 
+@TestFor(ExternalProcessController)
+@TestMixin(DomainClassUnitTestMixin)
+class ExternalProcessControllerTests {
 
-class ExternalProcessControllerTests extends ControllerUnitTestCase {
-
-    def p7 = new ExternalProcess(id:7, name:"alpha", command:"/bin/ls")
-    def p9 = new ExternalProcess(id:9, name:"beta", command:"/bin/cp")
+	def p7
+	def p9
 
     @Before
-    public void setUp() {
-        super.setUp()
-    	mockDomain ExternalProcess, [p7,p9]
+    public void setUp() {	
+ 	config.extproc.ui.enabled = true
+
+	mockDomain(ExternalProcess, [])
+ p7 = new ExternalProcess(id:7, name:"alpha", command:"/bin/ls")
+ p9 = new ExternalProcess(id:9, name:"beta", command:"/bin/cp")
+
+p7.save()
+p9.save()
+
     }
 
     @After
     public void tearDown() {
-        super.tearDown()
+
     }
 
     @Test
     public void index() {
-		controller.index()
-		assert "list" == controller.redirectArgs.action
+	controller.index()
+	assertEquals "/externalProcess/list", response.redirectedUrl
     }
 
-/*
+
     @Test
     public void list() {
-    	def model = controller.list()
-    	assert 2 == model.externalProcessInstanceList.size()
-    	assert p7 == model.externalProcessInstanceList[0]
-    	assert p9 == model.externalProcessInstanceList[1]
-    	assert 2 == model.externalProcessInstanceTotal
+	params.max=10
+    	def m1 = controller.list()
+    	assertEquals 2, m1.externalProcessInstanceList.size()
+    	assertEquals p7, m1.externalProcessInstanceList[0]
+    	assertEquals p9, m1.externalProcessInstanceList[1]
+    	assertEquals 2, m1.externalProcessInstanceTotal
     }
-*/
+
     @Test
     public void show() {
-    	controller.params.id = 7
-    	def model = controller.show()
-    	assert p7 == model.externalProcessInstance
+    	params.id = p7.id
+	def m1 = controller.show()
+    	assertEquals p7, m1.externalProcessInstance
     }
 
     @Test
     public void create() {
     	def model = controller.create()
-    	assert model.externalProcessInstance instanceof ExternalProcess
+    	assertTrue model.externalProcessInstance instanceof ExternalProcess
     }
 
     @Test
     public void save_success() {
-		controller.params.name = "Paul Woods"
-		controller.params.command = "abc"
+	request.method = "POST"
+	params.name = "hulle"
+	params.command = "abc"
     	controller.save()
-    	assert "show" == controller.redirectArgs.action
-    	assert null != controller.redirectArgs.id
+    	assertEquals 0, response.redirectedUrl.indexOf("/externalProcess/show")
+    	//assertNotNull != controller.redirectArgs.id
     }
 
     @Test
     public void save_failure() {
-    	controller.params.name = ""
-    	controller.save()
-    	assert "create" == controller.renderArgs.view
-    	assert controller.renderArgs.model.externalProcessInstance instanceof ExternalProcess
+	request.method = "POST"
+    	params.name = ""
+    	def m1 = controller.save()
+	assertEquals "error saving process", flash.message
+    	assertEquals "/externalProcess/create", view
+	assertTrue  model.externalProcessInstance instanceof ExternalProcess
+
     }
 
     @Test
     public void edit() {
-    	controller.params.id = 9
-    	def model = controller.edit()
-    	assert p9 == model.externalProcessInstance
+    	params.id = p9.id
+	def m1 = controller.edit()
+    	assertEquals p9, m1.externalProcessInstance
     }
 
     @Test
     public void update_success() {
-		controller.params.name = "ls"
-		controller.params.command = "/bin/ls"
-    	controller.params.id = 7
+	params.name = "ls"
+	params.command = "/bin/ls"
+    	params.id = p7.id
+	request.method = "POST"
     	controller.update()
-    	assert "show" == controller.redirectArgs.action
-    	assert 7 == controller.redirectArgs.id
+    	assertEquals "/externalProcess/show/${p7.id}", response.redirectedUrl
     }
 
     @Test
     public void update_failure() {
-    	controller.params.name = ""
-		controller.params.command = null
-    	controller.params.id = 9
-    	controller.update()
-    	assert "edit" == controller.renderArgs.view
-    	assert controller.renderArgs.model.externalProcessInstance instanceof ExternalProcess
+	request.method = "POST"
+	params.name = ""
+	params.command = null
+    	params.id = p9.id
+	controller.update()
+    	assertEquals "/externalProcess/edit", view
+    	assertEquals p9, model.externalProcessInstance
     }
 
     @Test
     public void delete() {
-    	controller.params.id = 7
-    	controller.delete()
-    	assert "list" == controller.redirectArgs.action
-    	assert 1 == ExternalProcess.count()
+	request.method = "POST"
+    	params.id = p7.id
+    	def m1 = controller.delete()
+
+    	assertEquals "/externalProcess/list", response.redirectedUrl
+    	assertEquals 1, ExternalProcess.count()
     }
 
     @Test
     public void withExternalProcess_success() {
-    	controller.params.id = 7
+    	params.id = p7.id
     	def externalProcess = null
     	controller.withDomain() { p ->
-    		externalProcess = p
+		externalProcess = p
     	}
 
-    	assert 7 == externalProcess.id
+    	assertEquals p7.id, externalProcess.id
     }
 
     @Test
     public void withExternalProcess_fail() {
-    	controller.params.id = 0
+    	params.id = 0
     	controller.withDomain() { p ->
     		assert false
     	}
-	assert "The ExternalProcess was not found." == controller.flash.message
-	assert "index" == controller.redirectArgs.action
-	assert "logout" == controller.redirectArgs.controller
+	assertEquals "The ExternalProcess was not found.", controller.flash.message
+	assertEquals "/logout/index", response.redirectedUrl
    }
 
 }

@@ -9,8 +9,8 @@ class ExternalProcess {
 	static final String NEW_WORKDIR = '_CREATE_NEW_'
 	static final String NO_WORKDIR = '_NO_WORKDIR_'
 	
-    static constraints = {
-    	name nullable:false, minSize:2, unique:true
+	static constraints = {
+	    	name nullable:false, minSize:2, unique:true
 		command blank:false
 		workDir nullable:true
 		timeout min:0L
@@ -28,7 +28,7 @@ class ExternalProcess {
 		returnFiles nullable:true
 		
 		tokenPattern nullable:true
-    }
+	}
 
 	static hasMany = [
 		allowedFiles:String,
@@ -36,7 +36,8 @@ class ExternalProcess {
 		returnFiles:String,
 		defaultParams:String
 	]
-    String name
+	Long id
+	String name
 	Boolean isRemote = false
 	Boolean exposedViaWS = false
 	
@@ -44,11 +45,11 @@ class ExternalProcess {
 	
 	String command
 	List<String> defaultParams 
-    String workDir = NEW_WORKDIR
+	String workDir = NEW_WORKDIR
 	boolean cleanUpWorkDir = false
 	boolean returnZippedDir = false
     
-    Map<String, String> env = [:]
+	Map<String, String> env = [:]
 	String allowedFilesPattern
 	List<String> allowedFiles = []
 	List<String> requiredFiles = []
@@ -59,7 +60,7 @@ class ExternalProcess {
 
 	@Override
 	public String toString() {
-		return "ExternalProcess [name=" + name + ", isRemote=" + isRemote +
+		return "ExternalProcess [(id:$id) name=" + name + ", isRemote=" + isRemote +
 				 ", exposedViaWS=" + exposedViaWS + ", command=" + command +
 				 ", defaultParams=" + defaultParams + ", workDir=" + workDir +
 				 ", cleanUpWorkDir=" + cleanUpWorkDir + ", returnZippedDir=" +

@@ -10,7 +10,6 @@ class ExtProcGrailsPlugin {
 
     // source code management
     def scm = [ url: "git://github.com/hennito/grails-ext-proc-plugin.git" ]
-    //def scm = [ url: "http://svn.grails-plugins.codehaus.org/browse/grails-plugins/" ]
 
     // the other plugins this plugin depends on
     def dependsOn = [:] // defined in BuildConfig
@@ -24,13 +23,10 @@ class ExtProcGrailsPlugin {
     def authorEmail = "henne.lohse@gmail.com"
     def title = "External Processes Plugin"
     def description = '''\
-This plugin provides easy access to external processes. You can pass command line arguments and input files
-in zip format.
-You can use this to create dvi/pdf from latex, images from gnuplot, calculation results from ansys and/or 
-simple directory listings.
+This plugin provides easy access to external processes. You can pass command line arguments and input files in zip format.
+You can use this to create dvi/pdf from latex, images from gnuplot, calculation results from ansys and/or simple directory listings.
 
-You can easily expose/consume external processes via web service making it easy to maintain only one 
-installation of the external process and use them from your application remotely.
+You can easily expose/consume external processes via web service making it easy to maintain only one installation of the external process and use them from your application remotely.
 '''
 
     // URL to the plugin's documentation
