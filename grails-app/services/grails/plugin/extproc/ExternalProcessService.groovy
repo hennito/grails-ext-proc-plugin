@@ -7,9 +7,14 @@ import grails.plugin.extproc.ExternalProcessInput;
 import grails.plugin.extproc.ExternalProcessResult;
 import java.util.regex.Pattern
 import com.grails.cxf.client.*
+import org.grails.cxf.utils.EndpointType
 
-class ExternalProcessService {
-	static expose = ['cxf']
+import javax.jws.WebService;
+import javax.jws.WebParam;
+
+@WebService(endpointInterface = "grails.plugin.extproc.ExternalProcessInterface", serviceName = "ExternalProcess")
+class ExternalProcessService implements ExternalProcessInterface {
+	static expose = EndpointType.JAX_WS
 	static exclude = ["invokeRemote","invokeLocal"]
 	
 	def fileHandlingService
@@ -17,7 +22,7 @@ class ExternalProcessService {
 
 	static transactional = true
 
-	ExternalProcessResult executeProcess(String name, ExternalProcessInput input) {
+	ExternalProcessResult executeProcess(@WebParam(name="name")String name, @WebParam(name="input")ExternalProcessInput input) {
 		final String METHOD_NAME = "executeProcess() - "
 		log.trace "$METHOD_NAME entering ..."
 		log.info "$METHOD_NAME process name is $name"

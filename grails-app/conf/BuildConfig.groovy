@@ -30,7 +30,7 @@ grails.project.dependency.resolution = {
 
     plugins {
 		runtime ':jquery:1.7.1'
-		runtime ':cxf:1.0.3'			
+		runtime ':cxf:1.0.4'			
 		runtime ':cxf-client:1.4.3'
  		runtime ":resources:1.1.6"
 		build ":release:2.0.4"
