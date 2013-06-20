@@ -294,10 +294,10 @@ class ExternalProcessService implements ExternalProcessInterface {
 		log.trace "$METHOD_NAME done."
 	}
 
-}
 
 
-private  class Worker extends Thread {
+
+class Worker extends Thread {
 	private final Process process;
 	private Integer exit;
 	private List<String> consoleLog =new ArrayList<String>();
@@ -317,4 +317,6 @@ private  class Worker extends Thread {
 			return;
 		}
 	}
+}
+
 }

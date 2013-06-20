@@ -10,29 +10,23 @@ grails.project.dependency.resolution = {
     }
     log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
     repositories {
-        grailsPlugins()
+    	grailsPlugins()
         grailsHome()
         grailsCentral()
-        grailsRepo "http://grails.org/plugins"
 
-        // uncomment the below to enable remote dependency resolution
-        // from public Maven repositories
-        //mavenLocal()
-        //mavenCentral()
-        //mavenRepo "http://snapshots.repository.codehaus.org"
-        //mavenRepo "http://repository.codehaus.org"
-        //mavenRepo "http://download.java.net/maven/2/"
-        //mavenRepo "http://repository.jboss.com/maven2/"
+        mavenLocal()
+        mavenCentral()
     }
     dependencies {
         // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
+	test "com.h2database:h2:1.0.20061217"
 	}
 
     plugins {
-		runtime ':jquery:1.7.1'
-		runtime ':cxf:1.0.4'			
-		runtime ':cxf-client:1.4.3'
- 		runtime ":resources:1.1.6"
+		runtime ':jquery:1.8.3'
+		runtime ':cxf:1.1.1'			
+		runtime ':cxf-client:1.5.3'
+ 		runtime ":resources:1.2"
 		build ":release:2.0.4"
 	}
     

@@ -65,7 +65,7 @@ class ExternalProcessIntegrationTests extends GroovyTestCase {
 			name:'pdflatexRetFilePatternFail',
 			command:'/usr/bin/pdflatex',
 			workDir:ExternalProcess.NEW_WORKDIR,
-			cleanUpWorkDir:true,
+			cleanUpWorkDir:false,
 			returnZippedDir:true,
 			timeout:1500,
 			allowedFiles:['master.tex'],
@@ -262,7 +262,12 @@ class ExternalProcessIntegrationTests extends GroovyTestCase {
 		assertNull result.serviceReturn
 		assertEquals result.returnCode, 0
 
-		assertNull result.zippedDir
+		File newTmp = fileHandlingService.createTempDir()
+		fileHandlingService.unzipByteArrayToDir(result.zippedDir, newTmp, null)
+		assertTrue newTmp.isDirectory() && !newTmp.list()
+
+		fileHandlingService.delDirectory(newTmp)
+
     }
 
 
