@@ -25,7 +25,7 @@
                 <div class="dialog">
                     <table>
                         <tbody>
-                        
+
                             <tr class="prop">
                                 <td valign="top" class="name">
                                     <label for="name"><g:message code="externalProcess.name.label" default="Name" /></label>
@@ -34,7 +34,7 @@
                                     <g:textField name="name" value="${externalProcessInstance?.name}" />
                                 </td>
                             </tr>
-                        
+
                             <tr class="prop">
                                 <td valign="top" class="name">
                                     <label for="command"><g:message code="externalProcess.command.label" default="Command" /></label>
@@ -43,7 +43,7 @@
                                     <g:textField name="command" value="${externalProcessInstance?.command}" />
                                 </td>
                             </tr>
-                   
+
                    			<tr class="prop" id="tokenPatternTr">
                                 <td valign="top" class="name">
                                     <label for="tokenPattern"><g:message code="externalProcess.tokenPattern.label" default="Token Pattern" /></label>
@@ -52,8 +52,7 @@
                                     <g:textField name="tokenPattern" value="${externalProcessInstance?.tokenPattern}" />
                                 </td>
                             </tr>
-                            
-                            
+
                             <tr>
                             <td></td>
                             <td>Note: ${ExternalProcess.WORKDIR_PLACEHOLDER} in default params or env will be replaced with the path of the workdir</td>
@@ -70,9 +69,8 @@
                                     </ul>
                                     <a class="int-link" onclick="return addStrToList('defaultParams')" href="#">Add</a></li>
                                 </td>
-                                
                             </tr>
-                        
+
                             <tr class="prop">
                                 <td valign="top" class="name">
                                     <label for="env"><g:message code="externalProcess.env.label" default="Env" /></label>
@@ -81,8 +79,8 @@
                                     <ul id="envMap">
                                     <g:each in="${externalProcessInstance?.env}" var="item" status="idx">
                                     	<li>
-                                    		<g:textField class="mapKey" name="env.key[${idx}]" value="${item.key?:''}" /> 
-                                    	   	<g:textField class="mapValue" name="env.value[${idx}]" value="${item.value?:''}" /> 
+                                    		<g:textField class="mapKey" name="env.key[${idx}]" value="${item.key?:''}" />
+                                    	   	<g:textField class="mapValue" name="env.value[${idx}]" value="${item.value?:''}" />
                                     	   	<a onclick="return removeMe(this)" href="#">x</a>
                                     	</li>
                                     </g:each>
@@ -95,13 +93,13 @@
                                 <td valign="top" class="name">
                                     <label for="workDir"><g:message code="externalProcess.workDir.label" default="Work Dir" /></label>
                                 </td>
-                                
+
                                 <td valign="top" class="value ${hasErrors(bean: externalProcessInstance, field: 'workDir', 'errors')}">
-                                	<g:select onchange="onWorkDirChange(this)" from="${['NEW','NONE','CUSTOM']}" name="wDir" /><br/>
+                                    <g:select onchange="onWorkDirChange(this)" from="${['NEW','NONE','CUSTOM']}" name="wDir" /><br/>
                                     <g:textField onchange="onWorkDirChange(this)"  name="workDir" value="${externalProcessInstance?.workDir}" />
                                 </td>
                             </tr>
-                            
+
                             <tr class="prop workDir" id="requiredFilesTr">
                                 <td valign="top" class="name">
                                     <label for="requiredFiles"><g:message code="externalProcess.requiredFiles.label" default="Required Files" /></label>
@@ -114,10 +112,9 @@
                                     </ul>
                                     <a class="int-link" onclick="return addStrToList('requiredFiles')" href="#">Add</a></li>
                                 </td>
-                                
+
                             </tr>
-                            
-                        
+
                         	<tr class="prop workDir" id="allowedFilesPatternTr">
                                 <td valign="top" class="name">
                                     <label for="allowedFilesPattern"><g:message code="externalProcess.allowedFilesPattern.label" default="Allowed Files Pattern" /></label>
@@ -139,9 +136,8 @@
                                     </ul>
                                     <a class="int-link" onclick="return addStrToList('allowedFiles')" href="#">Add</a></li>
                                 </td>
-                                
                             </tr>
-                        
+
                             <tr class="prop workDir">
                                 <td valign="top" class="name">
                                     <label for="returnZippedDir"><g:message code="externalProcess.returnZippedDir.label" default="Return Zipped Dir" /></label>
@@ -150,7 +146,7 @@
                                     <g:checkBox onchange="onReturnDirChange(this)" name="returnZippedDir" value="${externalProcessInstance?.returnZippedDir}" />
                                 </td>
                             </tr>
-                        
+
                             <tr class="prop workDir returnDir">
                                 <td valign="top" class="name">
                                     <label for="returnFilesPattern"><g:message code="externalProcess.returnFilesPattern.label" default="Return Files Pattern" /></label>
@@ -159,7 +155,7 @@
                                     <g:textField name="returnFilesPattern" value="${externalProcessInstance?.returnFilesPattern}" />
                                 </td>
                             </tr>
-                            
+
                         	<tr class="prop workDir returnDir">
                                 <td valign="top" class="name">
                                     <label for="returnFiles"><g:message code="externalProcess.returnFiles.label" default="Return Files" /></label>
@@ -173,7 +169,7 @@
                                     <a class="int-link" onclick="return addStrToList('returnFiles')" href="#">Add</a></li>
                                 </td>
                             </tr>
-                        
+
                             <tr class="prop workDir">
                                 <td valign="top" class="name">
                                     <label for="cleanUpWorkDir"><g:message code="externalProcess.cleanUpWorkDir.label" default="Clean Up Work Dir" /></label>
@@ -182,7 +178,7 @@
                                     <g:checkBox name="cleanUpWorkDir" value="${externalProcessInstance?.cleanUpWorkDir}" />
                                 </td>
                             </tr>
-                        
+
                             <tr class="prop">
                                 <td valign="top" class="name">
                                     <label for="exposedViaWS"><g:message code="externalProcess.exposedViaWS.label" default="Exposed Via WS" /></label>
@@ -191,7 +187,7 @@
                                     <g:checkBox name="exposedViaWS" value="${externalProcessInstance?.exposedViaWS}" />
                                 </td>
                             </tr>
-                        
+
                             <tr class="prop">
                                 <td valign="top" class="name">
                                     <label for="isRemote"><g:message code="externalProcess.isRemote.label" default="Is Remote" /></label>
@@ -200,7 +196,7 @@
                                     <g:checkBox name="isRemote" value="${externalProcessInstance?.isRemote}" />
                                 </td>
                             </tr>
-                        
+
                             <tr class="prop">
                                 <td valign="top" class="name">
                                     <label for="timeout"><g:message code="externalProcess.timeout.label" default="Timeout" /></label>
@@ -209,7 +205,7 @@
                                     <g:textField name="timeout" value="${fieldValue(bean: externalProcessInstance, field: 'timeout')}" />
                                 </td>
                             </tr>
-                        
+
                         </tbody>
                     </table>
                 </div>

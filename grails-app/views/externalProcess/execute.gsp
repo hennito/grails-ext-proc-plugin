@@ -1,4 +1,3 @@
-
 <%@ page import="grails.plugin.extproc.ExternalProcess" %>
 <html>
     <head>
@@ -24,24 +23,18 @@
                     <tbody>
                         <tr class="prop">
                             <td valign="top" class="name"><g:message code="externalProcess.name.label" default="Name" /></td>
-                            
                             <td valign="top" class="value"><g:link action="show" id="${externalProcessInstance?.id}">${fieldValue(bean: externalProcessInstance, field: "name")}</g:link></td>
-                            
                         </tr>
                         <tr class="prop">
                             <td valign="top" class="name"><g:message code="externalProcess.User.label" default="User" /></td>
-                            
                             <td valign="top" class="value"><g:textField name="name" value="${fieldValue(bean: input, field: "user")}"/></td>
-                            
                         </tr>
 
                         <tr class="prop">
                             <td valign="top" class="name"><g:message code="externalProcess.token.label" default="Token" /></td>
-                            
                             <td valign="top" class="value"><g:textField name="token" value="${fieldValue(bean: input, field: "token")}"/></td>
-                            
                         </tr>
-                        
+
 						<tr class="prop" id="parametersTr">
                                 <td valign="top" class="name">
                                     <label for="parameters"><g:message code="externalProcess.parameters.label" default="Parameters" /></label>
@@ -49,12 +42,12 @@
                                 <td valign="top" class="value">
                                 	<ul id="parametersList">
                                 	<g:each in="${input?.parameters}" var="p" status="idx">
-                                	<li><g:textField name="parameters[${idx}]" value="${p}"/> <a onclick="return removeMe(this)" href="#">x</a></li>                                	
+                                	<li><g:textField name="parameters[${idx}]" value="${p}"/> <a onclick="return removeMe(this)" href="#">x</a></li>
                                 	</g:each>
                                     </ul>
                                     <a class="int-link" onclick="return addStrToList('parameters')" href="#">Add</a></li>
                                 </td>
-                                
+
                             </tr>
 <g:if test="${externalProcessInstance.workDir != ExternalProcess.NO_WORKDIR}">
 <tr>
@@ -66,23 +59,16 @@
 <td valign="top" class="name"><g:checkBox name="downloadZippedDir" value="${externalProcessInstance?.returnZippedDir}" /></td>
 </tr>
 </g:if>
-
                                        </tbody>
                 </table>
 
-                
-
-			
             <div class="buttons">
                     <g:hiddenField name="id" value="${externalProcessInstance?.id}" />
                     <span class="button"><g:actionSubmit class="run" action="run" value="${message(code: 'default.button.run.label', default: 'Run')}" /></span>
-            
             </div>
                 </g:form>
-                
             </div>
-            
-				
+
         </div>
     </body>
 </html>

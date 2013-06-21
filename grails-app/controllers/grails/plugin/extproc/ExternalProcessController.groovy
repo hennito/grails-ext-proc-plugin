@@ -1,143 +1,137 @@
 package grails.plugin.extproc
 
-import java.util.Arrays;
-
 class ExternalProcessController {
 
 	def grailsApplication
-	
+
 	def beforeInterceptor = {
-		if (!grailsApplication || !grailsApplication.config) 
+		if (!grailsApplication || !grailsApplication.config) {
 			throw new Exception("no grails app and config")
-		if (!grailsApplication.config.extproc.ui.enabled)
+		}
+		if (!grailsApplication.config.extproc.ui.enabled) {
 			throw new Exception("error.extproc.ui.not.enabled")
+		}
 	}
-	
-	
+
 	def externalProcessService
-	
-    static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
-    def index() {		
-        redirect(action: "list", params: params)
-    }
+	static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
-    def list() {
-    	params.max = Math.min(params.max ? params.int('max') : 10, 100)
-        [externalProcessInstanceList: ExternalProcess.list(params), externalProcessInstanceTotal: ExternalProcess.count()]
-    }
+	static defaultAction = 'list'
 
-    def create() {
-        def externalProcessInstance = new ExternalProcess()
-        externalProcessInstance.properties = params
-        return [externalProcessInstance: externalProcessInstance]
-    }
-
-    def save() {
-        def externalProcessInstance = new ExternalProcess(params)
-		int idx = 0
-	while (params."env.key[$idx]") {
-		def key = params."env.key[$idx]"
-		def value = params."env.value[$idx]"
-		externalProcessInstance.env[key] = value
-		idx++
+	def list = {
+		params.max = Math.min(params.max ? params.int('max') : 10, 100)
+		[externalProcessInstanceList: ExternalProcess.list(params), externalProcessInstanceTotal: ExternalProcess.count()]
 	}
-		
-	boolean res = externalProcessInstance.validate()
-	log.debug externalProcessInstance.errors
-        if (res && externalProcessInstance.save(flush: true)) {            
-            redirect(action: "show", id: externalProcessInstance.id)
-        }
-        else {
-		flash.message = "error saving process"
-            	render(view: "create", model: [externalProcessInstance: externalProcessInstance])
-        }
-    }
 
-    def show()  {
-		withDomain { domain ->
-			[externalProcessInstance: domain]
-        }
-    }
+	def create = {
+		[externalProcessInstance: new ExternalProcess(params)]
+	}
 
-    def edit() {
-		withDomain { domain ->
-		[externalProcessInstance: domain]
-        }
-    }
-
-    def update() {
-	withDomain { domain ->
-		domain.env = [:]
-		domain.allowedFiles = []
-		domain.requiredFiles = []
-		domain.returnFiles = []
-		domain.defaultParams = []
-		domain.properties = params
-			
+	def save = {
+		def externalProcessInstance = new ExternalProcess(params)
 		int idx = 0
 		while (params."env.key[$idx]") {
 			def key = params."env.key[$idx]"
 			def value = params."env.value[$idx]"
-			domain.env[key] = value
+			externalProcessInstance.env[key] = value
 			idx++
 		}
-		   
-		if(domain.validate() && domain.save(flush:true)) {
-		   redirect action:"show", id:domain.id
-		} else {
-		   render view:"edit", model:[externalProcessInstance: domain]
-		}
-	}
-    }
 
-    def delete() {
-		withDomain { domain ->
-		    domain.delete()
-		    redirect action:"list"
+		boolean res = externalProcessInstance.validate()
+		log.debug externalProcessInstance.errors
+		if (!res || !externalProcessInstance.save(flush: true)) {
+			flash.message = "error saving process"
+			render(view: "create", model: [externalProcessInstance: externalProcessInstance])
+			return
 		}
-    }
-	
-	private def withDomain( Closure c) {
-		def domain = ExternalProcess.get(params.int("id"))
-		if(domain) {
-			c.call domain
-		} else {
-		    flash.message = "The ExternalProcess was not found."
-		    redirect controller:"logout", action:"index"
+
+		redirect(action: "show", id: externalProcessInstance.id)
+	}
+
+	def show = {
+		withDomain { domain ->
+			[externalProcessInstance: domain]
 		}
 	}
-	
-	
-	def execute(InputCommand input) {
-		withDomain { domain ->			
+
+	def edit = {
+		withDomain { domain ->
+			[externalProcessInstance: domain]
+		}
+	}
+
+	def update = {
+		withDomain { domain ->
+			domain.env = [:]
+			domain.allowedFiles = []
+			domain.requiredFiles = []
+			domain.returnFiles = []
+			domain.defaultParams = []
+			domain.properties = params
+
+			int idx = 0
+			while (params."env.key[$idx]") {
+				def key = params."env.key[$idx]"
+				def value = params."env.value[$idx]"
+				domain.env[key] = value
+				idx++
+			}
+
+			if (domain.validate() && domain.save(flush:true)) {
+				redirect action:"show", id:domain.id
+			}
+			else {
+				render view:"edit", model:[externalProcessInstance: domain]
+			}
+		}
+	}
+
+	def delete = {
+		withDomain { domain ->
+			domain.delete()
+			redirect action:"list"
+		}
+	}
+
+	private withDomain(Closure c) {
+		def domain = ExternalProcess.get(params.int("id"))
+		if (!domain) {
+			flash.message = "The ExternalProcess was not found."
+			redirect controller:"logout", action:"index"
+			return
+		}
+
+		c(domain)
+	}
+
+	def execute = { InputCommand input ->
+		withDomain { domain ->
 			[externalProcessInstance: domain, input: input]
 		}
 	}
-	
-	def run(InputCommand input) {
-		 withDomain { domain ->
-			 ExternalProcessInput procInp = new ExternalProcessInput()
-			 procInp.zippedWorkDir = input.zippedInput
-			 procInp.parameters = input.parameters
-			 procInp.token= input.token
-			 procInp.user= input.user
-			 ExternalProcessResult output = externalProcessService.executeProcess(domain.name, procInp)
-			 if (input.downloadZippedDir && output.zippedDir) {
-				 response.setContentType("application/zip")
-				 response.setHeader("Content-disposition","attachment; filename=${domain.name}.zip")
-				 response.setContentLength((int)output.zippedDir.size())
-				 OutputStream out = response.getOutputStream()
-				 out.write(output.zippedDir)
-				 out.close()
-				 
-			 }
-			 else
-			[externalProcessInstance: domain, output: output]
-		}
-		
-	}
 
+	def run = { InputCommand input ->
+		withDomain { domain ->
+			ExternalProcessInput procInp = new ExternalProcessInput()
+			procInp.zippedWorkDir = input.zippedInput
+			procInp.parameters = input.parameters
+			procInp.token= input.token
+			procInp.user= input.user
+			ExternalProcessResult output = externalProcessService.executeProcess(domain.name, procInp)
+			if (input.downloadZippedDir && output.zippedDir) {
+				response.setContentType("application/zip")
+				response.setHeader("Content-disposition","attachment; filename=${domain.name}.zip")
+				response.setContentLength((int)output.zippedDir.size())
+				OutputStream out = response.getOutputStream()
+				out.write(output.zippedDir)
+				out.close()
+			}
+			else {
+				[externalProcessInstance: domain, output: output]
+			}
+		}
+	}
 }
 
 class InputCommand {
@@ -147,11 +141,8 @@ class InputCommand {
 	List<String> parameters
 	boolean downloadZippedDir
 
-
-
 	@Override
-	public String toString() {
-		return "InputCommand [zippedInput=" + (zippedInput?'yes':'no')+ ", parameters=" + parameters + "]";
-	}	
-	
+	String toString() {
+		"InputCommand [zippedInput=${(zippedInput?'yes':'no')}, parameters=$parameters]"
+	}
 }
