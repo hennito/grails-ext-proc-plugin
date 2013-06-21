@@ -1,5 +1,3 @@
-
-<%@ page import="grails.plugin.extproc.ExternalProcess" %>
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -19,28 +17,23 @@
             <div class="message">${flash.message}</div>
             </g:if>
             <div class="dialog">
-            
+
                 <table>
                     <tbody>
-            
-					</tbody>
+                    </tbody>
                 </table>
 
             <g:each in="${output.consoleLog }" var="line">
             ${line }<br/>
-            </g:each>    
+            </g:each>
 
-			
             <div class="buttons">
                     <g:hiddenField name="id" value="${externalProcessInstance?.id}" />
                     <span class="button"><g:actionSubmit class="run" action="run" value="${message(code: 'default.button.run.label', default: 'Run')}" /></span>
-            
             </div>
-            
-                
+
             </div>
-            
-				
+
         </div>
     </body>
 </html>

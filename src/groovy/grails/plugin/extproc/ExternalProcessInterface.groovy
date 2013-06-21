@@ -1,12 +1,12 @@
 package grails.plugin.extproc
 
-import javax.jws.WebService
 import javax.jws.WebParam
+import javax.jws.WebService
 
 @WebService
-public interface ExternalProcessInterface {
+interface ExternalProcessInterface {
 
-	public ExternalProcessResult executeProcess(
-		@WebParam(name="name") String name, 
-		@WebParam(name="input")ExternalProcessInput input) ;
+	ExternalProcessResult executeProcess(
+		@WebParam(name="name") String name,
+		@WebParam(name="input")ExternalProcessInput input)
 }

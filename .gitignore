@@ -1,6 +1,8 @@
 /target
-/stacktrace.log
+stacktrace.log
 /target-eclipse
 /.link_to_grails_plugins
 /.settings
-
+*.zip
+plugin.xml
+web-app
