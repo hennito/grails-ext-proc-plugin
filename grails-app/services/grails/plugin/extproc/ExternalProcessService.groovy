@@ -1,96 +1,95 @@
 package grails.plugin.extproc
 
-import grails.plugin.extproc.remote.ExternalProcessServicePortType
-
 import java.util.regex.Pattern
 
 import javax.jws.WebParam
 import javax.jws.WebService
-
-import org.grails.cxf.utils.EndpointType
+import javax.jws.WebResult
+import javax.jws.WebMethod
 
 import com.grails.cxf.client.DynamicWebServiceClient
+import com.grails.cxf.client.WebServiceClientFactory
+import org.grails.cxf.utils.GrailsCxfEndpoint
+import org.grails.cxf.utils.EndpointType
 
-@WebService(endpointInterface = "grails.plugin.extproc.ExternalProcessInterface", serviceName = "ExternalProcess")
-class ExternalProcessService implements ExternalProcessInterface {
-	static expose = EndpointType.JAX_WS
-	static exclude = ["invokeRemote","invokeLocal"]
+import grails.transaction.Transactional
+
+@Transactional
+@GrailsCxfEndpoint(address='/externalProcess', expose=EndpointType.JAX_WS)
+class ExternalProcessService implements ExternalProcessInterface  {
+
+	def grailsApplication
 
 	def fileHandlingService
+	//def remoteInvokerServiceClient #### NOTE: injection breaks it all
 	def webServiceClientFactory
+	
+	
 
-	static transactional = false
-
-	ExternalProcessResult executeProcess(@WebParam(name="name")String name, @WebParam(name="input")ExternalProcessInput input) {
+	@WebMethod
+	@WebResult(name='')
+	ExternalProcessResult executeProcess(
+		@WebParam(name="name") String name, 
+		@WebParam(name="input") ExternalProcessInput input)	
+	{
 		final String METHOD_NAME = "executeProcess() - "
 		log.trace "$METHOD_NAME entering ..."
-		log.info "$METHOD_NAME process name is $name"
+		log.debug "$METHOD_NAME process name is $name"
 		ExternalProcess process = ExternalProcess.findByName(name)
 
 		if (process) {
+
+			if (process.tokenPattern) {
+				
+				if (!input.token.matches(process.tokenPattern)) {
+					log.error "$METHOD_NAME invalid token provided: '${input.token}' / '${process.tokenPattern}'"
+					return new ExternalProcessResult(serviceReturn: "error.token.invalid")
+				}
+			}
+
 			if (process.isRemote) {
 				if (!process.exposedViaWS) {
-					return invokeRemote((ExternalProcess)process,input)
+					return invokeRemote(process, input)
 				}
 				return new ExternalProcessResult(serviceReturn:'error.process.remote.and.exposed')
 			}
 			return invokeLocal((ExternalProcess)process,input)
 		}
-		return new ExternalProcessResult(serviceReturn:'error.process.notfound')
+		return new ExternalProcessResult(serviceReturn:'	error.process.notfound')
 	}
 
+	
 	private ExternalProcessResult invokeRemote(ExternalProcess process, ExternalProcessInput input) {
-		def result
-
 		final String METHOD_NAME = "invokeRemote() - "
 		log.info "$METHOD_NAME process is $process"
-		log.debug "$METHOD_NAME input is $input"
-
+		log.debug "$METHOD_NAME input is $input"	
+		
 		def (command, url) = process.command.split("@")
 		log.info "remote command is $command"
 		log.info "remote url is $url"
 
-		DynamicWebServiceClient client = new DynamicWebServiceClient(
-				clientInterface: ExternalProcessServicePortType,
-				serviceName: "$command",
-				serviceEndpointAddress: "$url",
-				secured: false,
-		//		username: "${input.user}",
-		//		password: "${input.token}",
-				webServiceClientFactory: webServiceClientFactory)
+		def ctx = grailsApplication.mainContext
 
-/*
-		Object webServiceClient = webServiceClientFactory.getWebServiceClient(
-			grails.plugin.extproc.remote.ExternalProcessServicePortType,
-			"$command",
-			"$url",
-			false,
-			"testUser",
-			"testPassword"
-		)
-	*/
+		def wsClient = ctx.getBean('remoteInvokerServiceClient')
+		webServiceClientFactory = ctx.getBean("webServiceClientFactory")
+		webServiceClientFactory.updateServiceEndpointAddress('remoteInvokerServiceClient', url)
 
-		def webserviceObject = client.object
-		log.info "webserviceObject : $webserviceObject"
 
-		log.info webServiceClientFactory.interfaceMap
-
-		log.info "wsClient is $client"
-
-		ExternalProcessInput wrappedInput =  new ExternalProcessInput(
+		def wrappedInput =  new grails.plugin.extproc.remote.ExternalProcessInput(
 			user:input.user,
 			token:input.token,
 			parameters:input.parameters,
 			env:input.env,
 			zippedWorkDir:input.zippedWorkDir)
 
-		result = webserviceObject.executeProcess(command, wrappedInput)
+
+		def result = wsClient.executeProcess(command, wrappedInput)
 
 		ExternalProcessResult wrappedResult = new ExternalProcessResult(
-			returnCode:result.returnCode,
-			consoleLog:result.consoleLog,
-			zippedDir:result.zippedDir,
-			serviceReturn:result.serviceReturn
+			returnCode:result?.returnCode,
+			consoleLog:result?.consoleLog,
+			zippedDir:result?.zippedDir,
+			serviceReturn:result?.serviceReturn
 		)
 
 		return wrappedResult
@@ -112,13 +111,6 @@ class ExternalProcessService implements ExternalProcessInterface {
 			return result
 		}
 
-		if (process.tokenPattern) {
-			if (!(process.tokenPattern =~ input.token )) {
-				log.error "$METHOD_NAME invalid token provided: ${input.token}"
-				result.serviceReturn = "error.token.invalid"
-				return result
-			}
-		}
 
 		if (process.isRemote) {
 			log.error "$METHOD_NAME attempt to call remote process locally"
@@ -302,4 +294,5 @@ class ExternalProcessService implements ExternalProcessInterface {
 			}
 		}
 	}
+
 }

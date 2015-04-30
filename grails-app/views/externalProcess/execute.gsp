@@ -45,7 +45,7 @@
                                 	<li><g:textField name="parameters[${idx}]" value="${p}"/> <a onclick="return removeMe(this)" href="#">x</a></li>
                                 	</g:each>
                                     </ul>
-                                    <a class="int-link" onclick="return addStrToList('parameters')" href="#">Add</a></li>
+                                    <a class="int-link" onclick="return extproc.addStrToList('parameters')" href="#">Add</a></li>
                                 </td>
 
                             </tr>

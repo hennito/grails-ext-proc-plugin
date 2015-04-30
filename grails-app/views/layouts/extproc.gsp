@@ -5,10 +5,7 @@
 
         <link rel="stylesheet" href="${resource(dir:'css',file:'extproc.css')}" />
         <link rel="shortcut icon" href="${resource(dir:'images',file:'favicon.ico')}" type="image/x-icon" />
-
-        <r:require module="extproc"/>
-        <g:layoutHead />
-        <r:layoutResources/>
+        <asset:javascript src="extproc.js"/>
     </head>
     <body>
         <div id="spinner" class="spinner" style="display:none;">
@@ -16,6 +13,5 @@
         </div>
         <div id="grailsLogo"><a href="http://grails.org"><img src="${resource(dir:'images',file:'grails_logo.png')}" alt="Grails" border="0" /></a></div>
         <g:layoutBody />
-        <r:layoutResources disposition="defer"/>
     </body>
 </html>

@@ -26,7 +26,7 @@ class FileHandlingService {
 	}
 
 	void delDirectory(File path) {
-		log.info "deleting directory $path"
+		log.debug "deleting directory $path"
 		File cur = path
 		if (cur.exists()) {
 			if (cur.isDirectory()) {
@@ -39,11 +39,11 @@ class FileHandlingService {
 					assert f.delete()
 				}
 			}
-			log.debug "--- $cur ---"
+			log.trace "--- $cur ---"
 			assert cur.delete()
 		}
 		else {
-			log.error "$path does not exist"
+			log.warn "$path does not exist"
 		}
 	}
 
@@ -66,10 +66,10 @@ class FileHandlingService {
 				if (!temp.exists() || !temp.isDirectory()) {
 					throw new Exception("Path $path does not exist or is not a directory!")
 				}
-				log.info "temp $path existed."
+				log.warn "temp $path existed."
 			}
 			if (temp.exists() && temp.isDirectory()) {
-				log.info "temp dir created: ${temp}"
+				log.debug "temp dir created: ${temp}"
 			}
 		} catch(Exception ex) {
 			log.error "Error creating temp dir:$ex"
@@ -137,7 +137,7 @@ class FileHandlingService {
 				dumpZipFileEntry(zis, entry, path)
 			}
 			else {
-				log.info "not allowed $fn in input - skipped"
+				log.warn "not allowed $fn in input - skipped"
 			}
 		}
 	}
@@ -185,7 +185,7 @@ class FileHandlingService {
 				if (!file.toString().startsWith(".")) {
 					if (!file.isDirectory()) {
 						def b = new FileInputStream(file).getBytes()
-						log.info "$METHOD_NAME Adding file to result zip: $file, size is ${b.size()}"
+						log.debug "$METHOD_NAME Adding file to result zip: $file, size is ${b.size()}"
 
 						ByteArrayInputStream fi = new ByteArrayInputStream(b)
 						def origin = new BufferedInputStream(fi, BUFFER)

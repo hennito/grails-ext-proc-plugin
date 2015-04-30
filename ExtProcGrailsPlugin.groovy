@@ -7,6 +7,8 @@ class ExtProcGrailsPlugin {
 
     def scm = [ url: "git://github.com/hennito/grails-ext-proc-plugin.git" ]
 
+    def loadBefore = ['cxfClient', 'cxf']
+
     def author = "Henrik Lohse"
     def authorEmail = "henne.lohse@gmail.com"
     def title = "External Processes Plugin"
@@ -19,4 +21,13 @@ You can easily expose/consume external processes via web service making it easy 
 
     def documentation = "https://github.com/hennito/grails-ext-proc-plugin"
     def issueManagement = [ url:'https://github.com/hennito/grails-ext-proc-plugin/issues' ]
+
+    def doWithSpring = { 
+        application.config.cxf.client.remoteInvokerServiceClient.clientInterface = grails.plugin.extproc.remote.ExternalProcessServicePortType
+        application.config.cxf.client.remoteInvokerServiceClient.serviceEndpointAddress = "configMe"
+
+        application.config.cxf.servlet.loadOnStartup = 10
+        application.config.cxf.servlet.servlets = [ CxfServlet: '/services/*' ]
+        application.config.cxf.servlet.endpoint.soap12Binding = false
+    }
 }

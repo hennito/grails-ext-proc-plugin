@@ -4,6 +4,8 @@ class ExternalProcessController {
 
 	def grailsApplication
 
+	def externalProcessService
+	
 	def beforeInterceptor = {
 		if (!grailsApplication || !grailsApplication.config) {
 			throw new Exception("no grails app and config")
@@ -13,23 +15,25 @@ class ExternalProcessController {
 		}
 	}
 
-	def externalProcessService
-
 	static allowedMethods = [save: "POST", update: "POST", delete: "POST"]
 
 	static defaultAction = 'list'
 
-	def list = {
+	def index() {
+		redirect action:"list"
+	}
+
+	def list() {
 		params.max = Math.min(params.max ? params.int('max') : 10, 100)
 		[externalProcessInstanceList: ExternalProcess.list(params), externalProcessInstanceTotal: ExternalProcess.count()]
 	}
 
-	def create = {
+	def create() {
 		[externalProcessInstance: new ExternalProcess(params)]
 	}
 
-	def save = {
-		def externalProcessInstance = new ExternalProcess(params)
+	def save(ExternalProcess externalProcessInstance) {
+//		def externalProcessInstance = new ExternalProcess(params)
 		int idx = 0
 		while (params."env.key[$idx]") {
 			def key = params."env.key[$idx]"
@@ -49,7 +53,7 @@ class ExternalProcessController {
 		redirect(action: "show", id: externalProcessInstance.id)
 	}
 
-	def show = {
+	def show= {
 		withDomain { domain ->
 			[externalProcessInstance: domain]
 		}
@@ -119,7 +123,10 @@ class ExternalProcessController {
 			procInp.token= input.token
 			procInp.user= input.user
 			ExternalProcessResult output = externalProcessService.executeProcess(domain.name, procInp)
-			if (input.downloadZippedDir && output.zippedDir) {
+			if (output.serviceReturn?.startsWith("error")) {
+				log.error "Error executing process: ${output.serviceReturn}"
+				flash.message = "Error executing process: ${domain.name}  - ${output.serviceReturn}"
+			} else if (input.downloadZippedDir && output.zippedDir) {
 				response.setContentType("application/zip")
 				response.setHeader("Content-disposition","attachment; filename=${domain.name}.zip")
 				response.setContentLength((int)output.zippedDir.size())

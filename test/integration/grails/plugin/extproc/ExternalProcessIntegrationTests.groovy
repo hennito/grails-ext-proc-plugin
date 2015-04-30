@@ -1,5 +1,8 @@
 package grails.plugin.extproc
 
+import grails.test.mixin.*
+
+@Mock( [ExternalProcess])
 class ExternalProcessIntegrationTests extends GroovyTestCase {
 	def fileHandlingService = new FileHandlingService()
 	def externalProcessService = new ExternalProcessService()
