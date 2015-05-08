@@ -42,6 +42,7 @@ cxf {
 		remoteInvokerServiceClient {
 			clientInterface = grails.plugin.extproc.remote.ExternalProcessServicePortType
 			serviceEndpointAddress = "${service.remote.url}"
+			namespace = "http://extproc.plugin.grails/"
 		}
 	}
 }

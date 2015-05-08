@@ -15,7 +15,7 @@ import org.grails.cxf.utils.EndpointType
 import grails.transaction.Transactional
 
 @Transactional
-@GrailsCxfEndpoint(address='/externalProcess', expose=EndpointType.JAX_WS)
+@GrailsCxfEndpoint(address='/externalProcess', expose=EndpointType.JAX_WS) //, wsdl="grails/plugin/extproc/ExternalProcess.wsdl")
 class ExternalProcessService implements ExternalProcessInterface  {
 
 	def grailsApplication
@@ -27,7 +27,7 @@ class ExternalProcessService implements ExternalProcessInterface  {
 	
 
 	@WebMethod
-	@WebResult(name='')
+	@WebResult(name='result')
 	ExternalProcessResult executeProcess(
 		@WebParam(name="name") String name, 
 		@WebParam(name="input") ExternalProcessInput input)	
@@ -37,11 +37,11 @@ class ExternalProcessService implements ExternalProcessInterface  {
 		log.debug "$METHOD_NAME process name is $name"
 		ExternalProcess process = ExternalProcess.findByName(name)
 
-		if (process) {
+		if (process) {			
 
 			if (process.tokenPattern) {
 				
-				if (!input.token.matches(process.tokenPattern)) {
+				if (!input.token || !input.token.matches(process.tokenPattern)) {
 					log.error "$METHOD_NAME invalid token provided: '${input.token}' / '${process.tokenPattern}'"
 					return new ExternalProcessResult(serviceReturn: "error.token.invalid")
 				}
@@ -55,7 +55,7 @@ class ExternalProcessService implements ExternalProcessInterface  {
 			}
 			return invokeLocal((ExternalProcess)process,input)
 		}
-		return new ExternalProcessResult(serviceReturn:'	error.process.notfound')
+		return new ExternalProcessResult(serviceReturn:'error.process.notfound')
 	}
 
 	
@@ -74,7 +74,6 @@ class ExternalProcessService implements ExternalProcessInterface  {
 		webServiceClientFactory = ctx.getBean("webServiceClientFactory")
 		webServiceClientFactory.updateServiceEndpointAddress('remoteInvokerServiceClient', url)
 
-
 		def wrappedInput =  new grails.plugin.extproc.remote.ExternalProcessInput(
 			user:input.user,
 			token:input.token,
@@ -83,7 +82,7 @@ class ExternalProcessService implements ExternalProcessInterface  {
 			zippedWorkDir:input.zippedWorkDir)
 
 
-		def result = wsClient.executeProcess(command, wrappedInput)
+		grails.plugin.extproc.remote.ExternalProcessResult result = wsClient.executeProcess(command, wrappedInput)
 
 		ExternalProcessResult wrappedResult = new ExternalProcessResult(
 			returnCode:result?.returnCode,
@@ -119,13 +118,13 @@ class ExternalProcessService implements ExternalProcessInterface  {
 		}
 
 		// setup workdir
-		File workDir
+		File workDir = null
 		log.debug "$METHOD_NAME process.workDir is ${process.workDir}"
 		switch (process.workDir) {
 			case null:
-				break
 			case ExternalProcess.NO_WORKDIR:
-				process.workDir = null
+				workDir = null
+				break
 			case ExternalProcess.NEW_WORKDIR:
 				workDir = fileHandlingService.createTempDir()
 				break
@@ -136,15 +135,26 @@ class ExternalProcessService implements ExternalProcessInterface  {
 				}
 				break
 		}
+		log.debug "$METHOD_NAME resolved workDir is ${workDir}"
 
 		List<String> cmds = []
 		cmds.add(process.command)
-		process.defaultParams.each { pr ->
-			cmds.add(workDir?pr.replaceAll(ExternalProcess.WORKDIR_PLACEHOLDER, workDir.absolutePath):pr)
+		process.defaultParams.each { String param ->			
+			if (param.contains(ExternalProcess.WORKDIR_PLACEHOLDER) && workDir)
+				cmds.add(param.replaceAll(ExternalProcess.WORKDIR_PLACEHOLDER, workDir.absolutePath))
+			else {
+				if (param != ExternalProcess.WORKDIR_PLACEHOLDER)
+					cmds.add(param)
+			}
 		}
 		input?.parameters?.each { param ->
 			if (fileHandlingService.basicSecurityCheck(param)) {
-				cmds.add(workDir?param.replaceAll(ExternalProcess.WORKDIR_PLACEHOLDER, workDir.absolutePath):param)
+				if (param.contains(ExternalProcess.WORKDIR_PLACEHOLDER) && workDir)
+					cmds.add(param.replaceAll(ExternalProcess.WORKDIR_PLACEHOLDER, workDir.absolutePath))
+				else {
+					if (param != ExternalProcess.WORKDIR_PLACEHOLDER)
+						cmds.add(param)
+				}
 			}
 			else {
 				log.error "$METHOD_NAME security check failed for '$param'"
@@ -166,7 +176,8 @@ class ExternalProcessService implements ExternalProcessInterface  {
 			env.put(key, value)
 		}
 
-		pb.directory(workDir)
+		if (workDir)
+			pb.directory(workDir)
 
 		log.debug "$METHOD_NAME workDir is $workDir"
 
@@ -186,21 +197,32 @@ class ExternalProcessService implements ExternalProcessInterface  {
 					if (fileAllowed) {
 						allFiles << fn
 					}
+					log.trace "$fn allowed $fileAllowed"
 					return fileAllowed
 				}
 				boolean failure = false
 				process.requiredFiles.each { rf ->
-					if (!allFiles.contains(rf)) failure = true
+					if (!allFiles.contains(rf)) {
+						log.error "$METHOD_NAME cannot invoke, missing input file $rf"
+						failure = true
+					}
 				}
-				if (failure)
-					throw new Exception("input not complete")
+				log.debug "$METHOD_NAME input provided in ZIP: $allFiles"
+				if (failure) {
+					log.error "$METHOD_NAME cannot invoke, input not complete"
+					result.serviceReturn = "error.process.input.incomplete"
+					return result
+				}
 			}
-			else
+			else {
 				log.debug "$METHOD_NAME no input files provided"
+			}
 		}
 		else {
-			if (input && input.zippedWorkDir) {
-				log.error "$METHOD_NAME no workdir, cannot unzip !"
+			if (input?.zippedWorkDir) {
+				log.error "$METHOD_NAME cannot invoke, zipped input but no workdir"
+				result.serviceReturn = "error.noworkdir.butinput"
+				return result
 			}
 			else {
 				log.debug "$METHOD_NAME no workdir, no input files ... ok"
@@ -264,13 +286,13 @@ class ExternalProcessService implements ExternalProcessInterface  {
 			}
 
 			log.debug "$METHOD_NAME done. $result"
-			return result
 		} catch (Exception ex1) {
 			log.error "$METHOD_NAME had an error: $ex1"
 			throw ex1
 		}
 
 		log.trace "$METHOD_NAME done."
+		return result
 	}
 
 	class Worker extends Thread {

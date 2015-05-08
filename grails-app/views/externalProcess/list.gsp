@@ -42,7 +42,7 @@
                 </table>
             </div>
             <div class="paginateButtons">
-                <g:paginate total="${externalProcessInstanceTotal}" />
+                <g:paginate total="${externalProcessInstanceCount}" />
             </div>
         </div>
     </body>

@@ -1,7 +1,9 @@
+
+import grails.util.Environment
 class ExtProcGrailsPlugin {
     def version = "0.4"
 
-    def grailsVersion = "1.3.5 > *" // cxf-plugin needs 1.3.5
+    def grailsVersion = "2.4.1 > *" // cxf-plugin needs 1.3.5
 
     def license = "APACHE"
 
@@ -23,11 +25,13 @@ You can easily expose/consume external processes via web service making it easy 
     def issueManagement = [ url:'https://github.com/hennito/grails-ext-proc-plugin/issues' ]
 
     def doWithSpring = { 
-        application.config.cxf.client.remoteInvokerServiceClient.clientInterface = grails.plugin.extproc.remote.ExternalProcessServicePortType
-        application.config.cxf.client.remoteInvokerServiceClient.serviceEndpointAddress = "configMe"
-
-        application.config.cxf.servlet.loadOnStartup = 10
-        application.config.cxf.servlet.servlets = [ CxfServlet: '/services/*' ]
-        application.config.cxf.servlet.endpoint.soap12Binding = false
+    //    if (Environment.current != Environment.TEST) {
+            application.config.cxf.client.remoteInvokerServiceClient.clientInterface = grails.plugin.extproc.remote.ExternalProcessInterface
+            application.config.cxf.client.remoteInvokerServiceClient.serviceEndpointAddress = "configMe"
+            
+            application.config.cxf.servlet.loadOnStartup = 10
+            application.config.cxf.servlet.servlets = [ CxfServlet: '/services/*' ]
+            application.config.cxf.servlet.endpoint.soap12Binding = false
+    //    }
     }
 }

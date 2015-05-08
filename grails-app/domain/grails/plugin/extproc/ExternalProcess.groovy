@@ -7,24 +7,24 @@ class ExternalProcess {
 	static final String NO_WORKDIR = '_NO_WORKDIR_'
 
 	static constraints = {
-		name minSize:2, unique:true
-		command blank:false
-		workDir nullable:true
-		timeout min:0L
+		name minSize:2, unique:true, blank:false, maxSize:80
+		command blank:false, maxSize: 255
+		workDir nullable:true, maxSize: 255
+		timeout min:0L, max: 60000L
 		isRemote nullable:false
 		exposedViaWS()
 		env nullable:true
-		defaultParams nullable:true
+		defaultParams nullable:true, maxSize: 10
 
-		requiredFiles nullable:true
+		requiredFiles nullable:true, maxSize: 10
 
-		allowedFilesPattern nullable:true
-		allowedFiles nullable:true
+		allowedFilesPattern nullable:true, maxSize:80
+		allowedFiles nullable:true, maxSize: 10
 
-		returnFilesPattern nullable:true
-		returnFiles nullable:true
+		returnFilesPattern nullable:true, maxSize: 80
+		returnFiles nullable:true, maxSize: 10
 
-		tokenPattern nullable:true
+		tokenPattern nullable:true, maxSize:80
 	}
 
 	static hasMany = [

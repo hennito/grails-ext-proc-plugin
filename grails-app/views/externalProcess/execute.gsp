@@ -27,7 +27,7 @@
                         </tr>
                         <tr class="prop">
                             <td valign="top" class="name"><g:message code="externalProcess.User.label" default="User" /></td>
-                            <td valign="top" class="value"><g:textField name="name" value="${fieldValue(bean: input, field: "user")}"/></td>
+                            <td valign="top" class="value"><g:textField name="user" value="${fieldValue(bean: input, field: "user")}"/></td>
                         </tr>
 
                         <tr class="prop">
@@ -64,6 +64,7 @@
 
             <div class="buttons">
                     <g:hiddenField name="id" value="${externalProcessInstance?.id}" />
+                    <g:hiddenField name="name" value="${externalProcessInstance?.name}" />
                     <span class="button"><g:actionSubmit class="run" action="run" value="${message(code: 'default.button.run.label', default: 'Run')}" /></span>
             </div>
                 </g:form>

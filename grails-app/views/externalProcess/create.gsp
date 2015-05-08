@@ -64,10 +64,10 @@
                                 <td valign="top" class="value ${hasErrors(bean: externalProcessInstance, field: 'defaultParams', 'errors')}">
                                 	<ul id="defaultParamsList">
                                     <g:each in="${externalProcessInstance?.defaultParams}" var="aFile" status="idx">
-                                    	<li><g:textField name="defaultParams[${idx}]" value="${aFile?:''}" /><a onclick="return removeMe(this)" href="#">x</a></li>
+                                    	<li><g:textField name="defaultParams[${idx}]" value="${aFile?:''}" /><a onclick="return extproc.removeMe(this)" href="#">x</a></li>
                                     </g:each>
                                     </ul>
-                                    <a class="int-link" onclick="return addStrToList('defaultParams')" href="#">Add</a></li>
+                                    <a class="int-link" onclick="return extproc.addStrToList('defaultParams')" href="#">Add</a></li>
                                 </td>
                             </tr>
 
@@ -81,11 +81,11 @@
                                     	<li>
                                     		<g:textField class="mapKey" name="env.key[${idx}]" value="${item.key?:''}" />
                                     	   	<g:textField class="mapValue" name="env.value[${idx}]" value="${item.value?:''}" />
-                                    	   	<a onclick="return removeMe(this)" href="#">x</a>
+                                    	   	<a onclick="return extproc.removeMe(this)" href="#">x</a>
                                     	</li>
                                     </g:each>
                                     </ul>
-                                    <a class="int-link" onclick="return addStrPairToList('env')" href="#">Add</a></li>
+                                    <a class="int-link" onclick="return extproc.addStrPairToList('env')" href="#">Add</a></li>
                                 </td>
                             </tr>
 
@@ -95,8 +95,8 @@
                                 </td>
 
                                 <td valign="top" class="value ${hasErrors(bean: externalProcessInstance, field: 'workDir', 'errors')}">
-                                    <g:select onchange="onWorkDirChange(this)" from="${['NEW','NONE','CUSTOM']}" name="wDir" /><br/>
-                                    <g:textField onchange="onWorkDirChange(this)"  name="workDir" value="${externalProcessInstance?.workDir}" />
+                                    <g:select onchange="extproc.onWorkDirChange(this)" from="${['NEW','NONE','CUSTOM']}" name="wDir" /><br/>
+                                    <g:textField onchange="extproc.onWorkDirChange(this)"  name="workDir" value="${externalProcessInstance?.workDir}" />
                                 </td>
                             </tr>
 
@@ -107,10 +107,10 @@
                                 <td valign="top" class="value ${hasErrors(bean: externalProcessInstance, field: 'requiredFiles', 'errors')}">
                                 	<ul id="requiredFilesList">
                                     <g:each in="${externalProcessInstance?.requiredFiles}" var="aFile" status="idx">
-                                    	<li><g:textField name="requiredFiles[${idx}]" value="${aFile?:''}" /><a onclick="return removeMe(this)" href="#">x</a></li>
+                                    	<li><g:textField name="requiredFiles[${idx}]" value="${aFile?:''}" /><a onclick="return extproc.removeMe(this)" href="#">x</a></li>
                                     </g:each>
                                     </ul>
-                                    <a class="int-link" onclick="return addStrToList('requiredFiles')" href="#">Add</a></li>
+                                    <a class="int-link" onclick="return extproc.addStrToList('requiredFiles')" href="#">Add</a></li>
                                 </td>
 
                             </tr>
@@ -134,7 +134,7 @@
                                     	<li><g:textField name="allowedFiles[${idx}]" value="${aFile?:''}" /> <a onclick="return removeMe(this)" href="#">x</a></li>
                                     </g:each>
                                     </ul>
-                                    <a class="int-link" onclick="return addStrToList('allowedFiles')" href="#">Add</a></li>
+                                    <a class="int-link" onclick="return extproc.addStrToList('allowedFiles')" href="#">Add</a></li>
                                 </td>
                             </tr>
 
@@ -143,7 +143,7 @@
                                     <label for="returnZippedDir"><g:message code="externalProcess.returnZippedDir.label" default="Return Zipped Dir" /></label>
                                 </td>
                                 <td valign="top" class="value ${hasErrors(bean: externalProcessInstance, field: 'returnZippedDir', 'errors')}">
-                                    <g:checkBox onchange="onReturnDirChange(this)" name="returnZippedDir" value="${externalProcessInstance?.returnZippedDir}" />
+                                    <g:checkBox onchange="extproc.onReturnDirChange(this)" name="returnZippedDir" value="${externalProcessInstance?.returnZippedDir}" />
                                 </td>
                             </tr>
 
@@ -166,7 +166,7 @@
                                     	<li><g:textField name="returnFiles[${idx}]" value="${aFile?:''}" /><a onclick="return removeMe(this)" href="#">x</a></li>
                                     </g:each>
                                     </ul>
-                                    <a class="int-link" onclick="return addStrToList('returnFiles')" href="#">Add</a></li>
+                                    <a class="int-link" onclick="return extproc.addStrToList('returnFiles')" href="#">Add</a></li>
                                 </td>
                             </tr>
 

@@ -22,7 +22,7 @@
                 <g:renderErrors bean="${externalProcessInstance}" as="list" />
             </div>
             </g:hasErrors>
-            <g:form method="post" >
+            <g:form method="post" useToken="true">
                 <g:hiddenField name="id" value="${externalProcessInstance?.id}" />
                 <g:hiddenField name="version" value="${externalProcessInstance?.version}" />
                 <div class="dialog">
