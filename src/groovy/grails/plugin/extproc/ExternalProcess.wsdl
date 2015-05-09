@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8'?><wsdl:definitions xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://extproc.plugin.grails/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:ns1="http://schemas.xmlsoap.org/soap/http" name="ExternalProcessServiceService" targetNamespace="http://extproc.plugin.grails/">
+  <wsdl:types>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://extproc.plugin.grails/" elementFormDefault="unqualified" targetNamespace="http://extproc.plugin.grails/" version="1.0">
+<xs:element name="executeProcess" type="tns:executeProcess"/>
+<xs:element name="executeProcessResponse" type="tns:executeProcessResponse"/>
+<xs:complexType name="executeProcess">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="name" type="xs:string"/>
+      <xs:element minOccurs="0" name="input" type="tns:externalProcessInput"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="externalProcessInput">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="user" type="xs:string"/>
+      <xs:element minOccurs="0" name="token" type="xs:string"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="parameters" nillable="true" type="xs:string"/>
+      <xs:element name="env">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="entry">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element minOccurs="0" name="key" type="xs:string"/>
+                  <xs:element minOccurs="0" name="value" type="xs:string"/>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+      <xs:element minOccurs="0" name="zippedWorkDir" type="xs:base64Binary"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="executeProcessResponse">
+    <xs:sequence>
+      <xs:element minOccurs="0" name="result" type="tns:externalProcessResult"/>
+    </xs:sequence>
+  </xs:complexType>
+<xs:complexType name="externalProcessResult">
+    <xs:sequence>
+      <xs:element name="returnCode" type="xs:int"/>
+      <xs:element maxOccurs="unbounded" minOccurs="0" name="consoleLog" nillable="true" type="xs:string"/>
+      <xs:element minOccurs="0" name="zippedDir" type="xs:base64Binary"/>
+      <xs:element name="timedOut" type="xs:boolean"/>
+      <xs:element minOccurs="0" name="serviceReturn" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
+  </wsdl:types>
+  <wsdl:message name="executeProcess">
+    <wsdl:part element="tns:executeProcess" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:message name="executeProcessResponse">
+    <wsdl:part element="tns:executeProcessResponse" name="parameters">
+    </wsdl:part>
+  </wsdl:message>
+  <wsdl:portType name="ExternalProcessInterface">
+    <wsdl:operation name="executeProcess">
+      <wsdl:input message="tns:executeProcess" name="executeProcess">
+    </wsdl:input>
+      <wsdl:output message="tns:executeProcessResponse" name="executeProcessResponse">
+    </wsdl:output>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="ExternalProcessServiceServiceSoapBinding" type="tns:ExternalProcessInterface">
+    <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="executeProcess">
+      <soap:operation soapAction="" style="document"/>
+      <wsdl:input name="executeProcess">
+        <soap:body use="literal"/>
+      </wsdl:input>
+      <wsdl:output name="executeProcessResponse">
+        <soap:body use="literal"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="ExternalProcessServiceService">
+    <wsdl:port binding="tns:ExternalProcessServiceServiceSoapBinding" name="ExternalProcessServicePort">
+      <soap:address location="http://localhost:9090/webservice-app/services/externalProcess"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>
