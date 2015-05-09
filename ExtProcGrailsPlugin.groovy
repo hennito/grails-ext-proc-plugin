@@ -25,13 +25,13 @@ You can easily expose/consume external processes via web service making it easy 
     def issueManagement = [ url:'https://github.com/hennito/grails-ext-proc-plugin/issues' ]
 
     def doWithSpring = { 
-    //    if (Environment.current != Environment.TEST) {
-            application.config.cxf.client.remoteInvokerServiceClient.clientInterface = grails.plugin.extproc.remote.ExternalProcessInterface
-            application.config.cxf.client.remoteInvokerServiceClient.serviceEndpointAddress = "configMe"
-            
-            application.config.cxf.servlet.loadOnStartup = 10
-            application.config.cxf.servlet.servlets = [ CxfServlet: '/services/*' ]
-            application.config.cxf.servlet.endpoint.soap12Binding = false
-    //    }
+    
+        application.config.cxf.client.remoteInvokerServiceClient.clientInterface = grails.plugin.extproc.remote.ExternalProcessInterface
+        application.config.cxf.client.remoteInvokerServiceClient.serviceEndpointAddress = "configMe"
+        
+        application.config.cxf.servlet.loadOnStartup = 10
+        application.config.cxf.servlet.servlets = [ CxfServlet: '/services/*' ]
+        application.config.cxf.servlet.endpoint.soap12Binding = false
+
     }
 }

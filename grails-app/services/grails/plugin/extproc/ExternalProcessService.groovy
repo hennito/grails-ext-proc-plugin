@@ -81,7 +81,6 @@ class ExternalProcessService implements ExternalProcessInterface  {
 			env:input.env,
 			zippedWorkDir:input.zippedWorkDir)
 
-
 		grails.plugin.extproc.remote.ExternalProcessResult result = wsClient.executeProcess(command, wrappedInput)
 
 		ExternalProcessResult wrappedResult = new ExternalProcessResult(
