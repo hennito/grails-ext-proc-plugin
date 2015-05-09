@@ -168,7 +168,7 @@ Will invoke gnuplot on the server via webservice.
 
 A simple UI is available to setup external processes and invoke them.
 It is disabled by default. If you want to use it, you probably want to
-setup prober security first. I.e. use spring security to restrict
+setup proper security first. I.e. use spring security to restrict
 access to authorized users only.
 
 To enable the UI simply set
