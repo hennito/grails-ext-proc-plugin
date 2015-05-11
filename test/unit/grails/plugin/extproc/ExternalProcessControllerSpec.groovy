@@ -74,10 +74,8 @@ class ExternalProcessControllerSpec extends Specification {
 			request.contentType = MULTIPART_FORM_CONTENT_TYPE
 			params.name = "hulle"
 			params.command = "abc"
-			params["env.key[0]"] ="key1"
-			params["env.key[1]"] ="key2"
-			params["env.value[0]"] ="val1"
-			params["env.value[1]"] ="val2"		
+			params["env.key"] = ["key1", "key2"]
+			params["env.value"] = ["val1", "val2" ]
 
 		expect:
 			0 == ExternalProcess.count()
@@ -97,10 +95,8 @@ class ExternalProcessControllerSpec extends Specification {
 			request.contentType = FORM_CONTENT_TYPE	
 			params.name = "hulle"
 			params.command = "abc"
-			params["env.key[0]"] ="key1"
-			params["env.key[1]"] ="key2"
-			params["env.value[0]"] ="val1"
-			params["env.value[1]"] ="val2"
+			params["env.key"] = ["key1", "key2"]
+			params["env.value"] = ["val1", "val2" ]
 			params.defaultParams = ['p1', 'p2', 'p3']
 
 		expect:
@@ -198,10 +194,8 @@ class ExternalProcessControllerSpec extends Specification {
 			params.name = "ls"
 			params.command = "/bin/ls"
 			params.id = p7.id			
-			params["env.key[0]"] ="key1"
-			params["env.key[1]"] ="key2"
-			params["env.value[0]"] ="val1"
-			params["env.value[1]"] ="val2"
+			params["env.key"] = ["key1", "key2"]
+			params["env.value"] = ["val1", "val2" ]
 			params.defaultParams = ['p1', 'p2', 'p3']
 
 		and:
@@ -209,7 +203,7 @@ class ExternalProcessControllerSpec extends Specification {
 	        	params[SynchronizerTokensHolder.TOKEN_URI] = '/controller/update'
 	        	params[SynchronizerTokensHolder.TOKEN_KEY] = tokenHolder.generateToken(params[SynchronizerTokensHolder.TOKEN_URI])
 
-	    	when:
+    	when:
 	    		controller.update()
 	   	and:
 	    		def externalProcess
@@ -217,7 +211,7 @@ class ExternalProcessControllerSpec extends Specification {
 		    		externalProcess = ExternalProcess.get(p7.id)
 		    	}
 
-	    	then:
+    	then:
 			200 == response.status	    
 			"ls" == externalProcess.name 
 			['p1', 'p2', 'p3'] == externalProcess.defaultParams

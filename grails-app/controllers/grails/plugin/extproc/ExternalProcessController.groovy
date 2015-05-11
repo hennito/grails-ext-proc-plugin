@@ -52,15 +52,15 @@ class ExternalProcessController {
             return
         }
         
-        externalProcessInstance.env = mapFromParams(params.env)
-
+        externalProcessInstance.env = mapFromParams(params.list("env.key"), params.list("env.value"))
+    
         if (externalProcessInstance.hasErrors()) {
             respond externalProcessInstance.errors, view:'create'
             return
         }
 
         externalProcessInstance.save flush:true, cascade:'all'
-
+    
         request.withFormat {
             form multipartForm {
                 flash.message = message(code: 'default.created.message', args: [message(code: 'product.label', default: 'Product'), externalProcessInstance.id])
@@ -80,8 +80,8 @@ class ExternalProcessController {
             notFound()
             return
         }
-
-        externalProcessInstance.env = mapFromParams(params.env)
+        
+        externalProcessInstance.env = mapFromParams(params.list("env.key"), params.list("env.value"))
     
         if (externalProcessInstance.hasErrors()) {
             respond externalProcessInstance.errors, view:'edit'
@@ -103,13 +103,10 @@ class ExternalProcessController {
         }
     }
 
-    private Map<String, String> mapFromParams(env) {
-        Map<String, String> res = [:]
-        if (!env) return [:]
-        int idx = 0
-        while (idx < 10 && env["key[$idx]"]) {
-            res[env["key[$idx]"]] = env["value[$idx]"]
-            idx++
+    private Map<String, String> mapFromParams(List<String> l1, List<String> l2) {
+        def res = [:]
+        l1.eachWithIndex { i, idx ->
+            res[i] = l2[idx]
         }
         return res
     }

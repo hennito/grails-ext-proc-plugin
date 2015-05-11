@@ -10,21 +10,6 @@ var extproc = {
 		var sectionName = ul.attr("id").substr(0,ul.attr("id").length-idType.length);
 
 		meLi.remove();
-		var lis = ul.find("li");
-		for (var idx = 0; idx < lis.length; idx++) {
-			var inputs = $(lis[idx]).find("input");
-			if (inputs.length > 1) {
-				$(inputs[0]).attr("id",sectionName +".key["+idx+"]");
-				$(inputs[0]).attr("name",sectionName +".key["+idx+"]");
-				$(inputs[1]).attr("id",sectionName +".value["+idx+"]");
-				$(inputs[1]).attr("name",sectionName +".value["+idx+"]");
-
-			}
-			else {
-				$(inputs[0]).attr("id",sectionName +"["+idx+"]");
-				$(inputs[0]).attr("name",sectionName +"["+idx+"]");
-			}
-		}
 		return false;
 	},
 
@@ -33,8 +18,8 @@ var extproc = {
 		var ul = $('#' + type + "Map");
 		if (ul.length > 0) {
 			var idx = $(ul).find("li").length;		
-			var newLi = "<li><input type='text' name='"+type+".key[" + (idx) + "]' id='"+type+"[" + (idx) + "]' value='' />"+
-			"<input type='text' name='"+type+".value[" + (idx) + "]' id='"+type+"[" + (idx) + "]' value='' />" +
+			var newLi = "<li><input type='text' name='"+type+".key' id='"+type+"[" + (idx) + "]' value='' />"+
+			"<input type='text' name='"+type+".value' id='"+type+"[" + (idx) + "]' value='' />" +
 			' <a class="int-link" onclick="return self.removeMe(this)" href="#">x</a>' + 
 			"</li>" ;
 			ul.append(newLi);
@@ -46,7 +31,7 @@ var extproc = {
 		var ul = $('#' + type + "List");
 		if (ul.length > 0) {
 			var idx = $(ul).find("li").length;		
-			var newLi = "<li><input type='text' name='"+type+"[" + (idx) + "]' id='"+type+"[" + (idx) + "]' value='' />"+
+			var newLi = "<li><input type='text' name='"+type+"' id='"+type+"[" + (idx) + "]' value='' />"+
 			' <a class="int-link" onclick="return extproc.removeMe(this)" href="#">x</a>' + 
 			"</li>" ;
 			ul.append(newLi);
@@ -56,7 +41,7 @@ var extproc = {
 
 	onReturnDirChange: function(elem) {
 		var checkbox = $(elem);
-		var check = checkbox.attr("checked") 
+		var check = checkbox[0].checked; 
 		if (check) {
 			$('.returnDir').show();
 		}
