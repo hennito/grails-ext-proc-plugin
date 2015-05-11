@@ -74,7 +74,10 @@ class ExternalProcessControllerSpec extends Specification {
 			request.contentType = MULTIPART_FORM_CONTENT_TYPE
 			params.name = "hulle"
 			params.command = "abc"
-			params.env = [key:['key1', 'key2'], value:['val1','val2']]		
+			params["env.key[0]"] ="key1"
+			params["env.key[1]"] ="key2"
+			params["env.value[0]"] ="val1"
+			params["env.value[1]"] ="val2"		
 
 		expect:
 			0 == ExternalProcess.count()
@@ -85,7 +88,7 @@ class ExternalProcessControllerSpec extends Specification {
 		then:			
 			201 == response.status
 			def externalProcess = ExternalProcess.list()[0]
-			[key:['key1', 'key2'], value:['val1','val2']] == externalProcess.env
+			['key1':'val1', 'key2':'val2'] == externalProcess.env
 	}
 
 	void "test save success multipart form"() {		
@@ -94,7 +97,11 @@ class ExternalProcessControllerSpec extends Specification {
 			request.contentType = FORM_CONTENT_TYPE	
 			params.name = "hulle"
 			params.command = "abc"
-			params.env = [key:['key1', 'key2'], value:['val1','val2']]
+			params["env.key[0]"] ="key1"
+			params["env.key[1]"] ="key2"
+			params["env.value[0]"] ="val1"
+			params["env.value[1]"] ="val2"
+			params.defaultParams = ['p1', 'p2', 'p3']
 
 		expect:
 			0 == ExternalProcess.count()
@@ -105,7 +112,8 @@ class ExternalProcessControllerSpec extends Specification {
 			
 		then:			
 			externalProcess == model.externalProcess
-			[key:['key1', 'key2'], value:['val1','val2']] == externalProcess.env
+			['key1':'val1', 'key2':'val2'] == externalProcess.env
+			['p1', 'p2', 'p3'] == externalProcess.defaultParams
 	}
 	
 	void "test save failure"() {
@@ -184,26 +192,36 @@ class ExternalProcessControllerSpec extends Specification {
 
 	void "test update with valid form token"() {
 		given:
+			request.method = "POST"
+
 			def p7 = new ExternalProcess(id:7, name:"alpha", command:"/bin/ls").save()
 			params.name = "ls"
 			params.command = "/bin/ls"
-			params.id = p7.id
-			request.method = "POST"
+			params.id = p7.id			
+			params["env.key[0]"] ="key1"
+			params["env.key[1]"] ="key2"
+			params["env.value[0]"] ="val1"
+			params["env.value[1]"] ="val2"
+			params.defaultParams = ['p1', 'p2', 'p3']
+
 		and:
 			def tokenHolder = SynchronizerTokensHolder.store(session)
-	        params[SynchronizerTokensHolder.TOKEN_URI] = '/controller/update'
-	        params[SynchronizerTokensHolder.TOKEN_KEY] = tokenHolder.generateToken(params[SynchronizerTokensHolder.TOKEN_URI])
+	        	params[SynchronizerTokensHolder.TOKEN_URI] = '/controller/update'
+	        	params[SynchronizerTokensHolder.TOKEN_KEY] = tokenHolder.generateToken(params[SynchronizerTokensHolder.TOKEN_URI])
 
-	    when:
-	    	controller.update()
-	    	def externalProcess
-	    	ExternalProcess.withNewSession {
-	    		externalProcess = ExternalProcess.get(p7.id)
-	    	}
+	    	when:
+	    		controller.update()
+	   	and:
+	    		def externalProcess
+		    	ExternalProcess.withNewSession {
+		    		externalProcess = ExternalProcess.get(p7.id)
+		    	}
 
-	    then:
+	    	then:
 			200 == response.status	    
 			"ls" == externalProcess.name 
+			['p1', 'p2', 'p3'] == externalProcess.defaultParams
+			['key1':'val1', 'key2':'val2'] == externalProcess.env
 	}
 
 	void "test delete"() {
