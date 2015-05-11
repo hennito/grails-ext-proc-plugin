@@ -66,7 +66,7 @@
                                 <td valign="top" class="value ${hasErrors(bean: externalProcessInstance, field: 'defaultParams', 'errors')}">
                                 	<ul id="defaultParamsList">
                                     <g:each in="${externalProcessInstance?.defaultParams}" var="aFile" status="idx">
-                                    	<li><g:textField name="defaultParams[${idx}]" value="${aFile?:''}" /><a onclick="return extproc.removeMe(this)" href="#">x</a></li>
+                                    	<li><g:textField name="defaultParams" value="${aFile?:''}" /><a onclick="return extproc.removeMe(this)" href="#">x</a></li>
                                     </g:each>
                                     </ul>
                                     <a class="int-link" onclick="return extproc.addStrToList('defaultParams')" href="#">Add</a></li>
@@ -82,8 +82,8 @@
                                     <ul id="envMap">
                                     <g:each in="${externalProcessInstance?.env}" var="item" status="idx">
                                     	<li>
-                                    		<g:textField class="mapKey" name="env.key[${idx}]" value="${item.key?:''}" />
-                                    	   	<g:textField class="mapValue" name="env.value[${idx}]" value="${item.value?:''}" />
+                                    		<g:textField class="mapKey" name="env.key" value="${item.key?:''}" />
+                                    	   	<g:textField class="mapValue" name="env.value" value="${item.value?:''}" />
                                     	   	<a onclick="return extproc.removeMe(this)" href="#">x</a>
                                     	</li>
                                     </g:each>
@@ -110,7 +110,7 @@
                                 <td valign="top" class="value ${hasErrors(bean: externalProcessInstance, field: 'requiredFiles', 'errors')}">
                                 	<ul id="requiredFilesList">
                                     <g:each in="${externalProcessInstance?.requiredFiles}" var="aFile" status="idx">
-                                    	<li><g:textField name="requiredFiles[${idx}]" value="${aFile?:''}" /><a onclick="return extproc.removeMe(this)" href="#">x</a></li>
+                                    	<li><g:textField name="requiredFiles" value="${aFile?:''}" /><a onclick="return extproc.removeMe(this)" href="#">x</a></li>
                                     </g:each>
                                     </ul>
                                     <a class="int-link" onclick="return extproc.addStrToList('requiredFiles')" href="#">Add</a></li>
@@ -133,7 +133,7 @@
                                 <td valign="top" class="value ${hasErrors(bean: externalProcessInstance, field: 'allowedFiles', 'errors')}">
                                 	<ul id="allowedFilesList">
                                     <g:each in="${externalProcessInstance?.allowedFiles}" var="aFile" status="idx">
-                                    	<li><g:textField name="allowedFiles[${idx}]" value="${aFile?:''}" /><a onclick="return extproc.removeMe(this)" href="#">x</a></li>
+                                    	<li><g:textField name="allowedFiles" value="${aFile?:''}" /><a onclick="return extproc.removeMe(this)" href="#">x</a></li>
                                     </g:each>
                                     </ul>
                                     <a class="int-link" onclick="return extproc.addStrToList('allowedFiles')" href="#">Add</a></li>
@@ -165,7 +165,7 @@
                                 <td valign="top" class="value ${hasErrors(bean: externalProcessInstance, field: 'returnFiles', 'errors')}">
                                 	<ul id="returnFilesList">
                                     <g:each in="${externalProcessInstance?.returnFiles}" var="aFile" status="idx">
-                                    	<li><g:textField name="returnFiles[${idx}]" value="${aFile?:''}" /><a onclick="return extproc.removeMe(this)" href="#">x</a></li>
+                                    	<li><g:textField name="returnFiles" value="${aFile?:''}" /><a onclick="return extproc.removeMe(this)" href="#">x</a></li>
                                     </g:each>
                                     </ul>
                                     <a class="int-link" onclick="return extproc.addStrToList('returnFiles')" href="#">Add</a></li>
