@@ -1,7 +1,7 @@
 
 import grails.util.Environment
 class ExtProcGrailsPlugin {
-    def version = "0.4"
+    def version = "0.5"
 
     def grailsVersion = "2.4.1 > *" // cxf-plugin needs 1.3.5
 
