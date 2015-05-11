@@ -51,21 +51,15 @@ class ExternalProcessController {
             notFound()
             return
         }
-
-	    int idx = 0
-		while (params."env.key[$idx]") {
-			def key = params."env.key[$idx]"
-			def value = params."env.value[$idx]"
-			externalProcessInstance.env[key] = value
-			idx++
-		}
+        
+        externalProcessInstance.env = mapFromParams(params.env)
 
         if (externalProcessInstance.hasErrors()) {
             respond externalProcessInstance.errors, view:'create'
             return
         }
 
-        externalProcessInstance.save flush:true
+        externalProcessInstance.save flush:true, cascade:'all'
 
         request.withFormat {
             form multipartForm {
@@ -87,22 +81,15 @@ class ExternalProcessController {
             return
         }
 
-        externalProcessInstance.env = [:]
-        int idx = 0
-		while (params."env.key[$idx]") {
-			def key = params."env.key[$idx]"
-			def value = params."env.value[$idx]"
-			externalProcessInstance.env[key] = value
-			idx++
-		}
-
+        externalProcessInstance.env = mapFromParams(params.env)
+    
         if (externalProcessInstance.hasErrors()) {
             respond externalProcessInstance.errors, view:'edit'
             return
         }
 
         withForm {
-            externalProcessInstance.save flush:true
+            externalProcessInstance.save flush:true, cascade:'all'
 
             request.withFormat {
                 form multipartForm {
@@ -114,6 +101,17 @@ class ExternalProcessController {
         }.invalidToken {
              respond externalProcessInstance, [status: CONFLICT]
         }
+    }
+
+    private Map<String, String> mapFromParams(env) {
+        Map<String, String> res = [:]
+        if (!env) return [:]
+        int idx = 0
+        while (idx < 10 && env["key[$idx]"]) {
+            res[env["key[$idx]"]] = env["value[$idx]"]
+            idx++
+        }
+        return res
     }
 
     @Transactional
